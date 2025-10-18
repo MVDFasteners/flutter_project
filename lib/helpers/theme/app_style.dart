@@ -99,7 +99,7 @@ class AppTheme {
     ),
 
 
-    /// Tab bar Theme
+    /// Tab bar Theme -header file
     tabBarTheme: TabBarThemeData(
       unselectedLabelColor: Color(0xff495057),
       labelColor: AppTheme.primaryColor,
