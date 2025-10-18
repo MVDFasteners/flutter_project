@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "candidate": "Patrica",
+    "category": "Manufacture",
+    "designation": "Sr.UI Developer",
+    "mail": "pbeedie0@ustream.tv",
+    "location": "Pojan",
+    "date": "2024-08-09T06:03:25Z",
+    "type": "Freelancer"
+  },
+  {
+    "id": 2,
+    "candidate": "Angelique",
+    "category": "Marketing",
+    "designation": "Team Lead",
+    "mail": "asamwayes1@fotki.com",
+    "location": "Jiangluo",
+    "date": "2023-11-17T10:23:18Z",
+    "type": "Hybride"
+  },
+  {
+    "id": 3,
+    "candidate": "Garnet",
+    "category": "Marketing",
+    "designation": "Team Lead",
+    "mail": "gjarrelt2@dailymail.co.uk",
+    "location": "Wissembourg",
+    "date": "2024-03-18T15:31:21Z",
+    "type": "Freelancer"
+  },
+  {
+    "id": 4,
+    "candidate": "Guglielmo",
+    "category": "Manufacture",
+    "designation": "Sales Executive",
+    "mail": "gcarlone3@ted.com",
+    "location": "Aoqiao",
+    "date": "2024-04-08T22:04:13Z",
+    "type": "Part Time"
+  },
+  {
+    "id": 5,
+    "candidate": "Reggie",
+    "category": "Manufacture",
+    "designation": "Team Lead",
+    "mail": "rmacieiczyk4@booking.com",
+    "location": "Insrom",
+    "date": "2024-01-09T06:29:40Z",
+    "type": "Freelancer"
+  },
+  {
+    "id": 6,
+    "candidate": "Florri",
+    "category": "Manufacture",
+    "designation": "Sales Executive",
+    "mail": "fharesign5@yellowbook.com",
+    "location": "Itambacuri",
+    "date": "2024-09-05T11:09:36Z",
+    "type": "Part Time"
+  },
+  {
+    "id": 7,
+    "candidate": "Annabella",
+    "category": "Manufacture",
+    "designation": "Team Lead",
+    "mail": "aossipenko6@ucoz.com",
+    "location": "Watthana Nakhon",
+    "date": "2024-07-27T16:17:23Z",
+    "type": "Full Time"
+  },
+  {
+    "id": 8,
+    "candidate": "Arlene",
+    "category": "Manufacture",
+    "designation": "Team Lead",
+    "mail": "agook7@google.com.hk",
+    "location": "Hayama",
+    "date": "2024-09-14T13:32:31Z",
+    "type": "Freelancer"
+  },
+  {
+    "id": 9,
+    "candidate": "Shurlocke",
+    "category": "Manufacture",
+    "designation": "Sales Executive",
+    "mail": "sgallehawk8@squidoo.com",
+    "location": "Bel Air Rivière Sèche",
+    "date": "2024-06-18T00:23:24Z",
+    "type": "Freelancer"
+  },
+  {
+    "id": 10,
+    "candidate": "Ricoriki",
+    "category": "Service",
+    "designation": "Sales Executive",
+    "mail": "rgillio9@mapy.cz",
+    "location": "Tawangsari",
+    "date": "2024-06-14T19:59:41Z",
+    "type": "Freelancer"
+  }
+]

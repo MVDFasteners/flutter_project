@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Roda Cleeves",
+    "designation": "NuxtJs Developer",
+    "phone_number": "242 805 915 8461",
+    "experience": 1.3,
+    "joiningDate": "2023-03-23T09:08:02Z"
+  },
+  {
+    "id": 2,
+    "name": "Olly Caccavari",
+    "designation": "Project Manager",
+    "phone_number": "63 636 551 3038",
+    "experience": 3.1,
+    "joiningDate": "2023-04-24T16:48:21Z"
+  },
+  {
+    "id": 3,
+    "name": "Charil Spatoni",
+    "designation": "React Developer",
+    "phone_number": "1 115 275 0617",
+    "experience": 3.2,
+    "joiningDate": "2023-08-20T11:01:30Z"
+  },
+  {
+    "id": 4,
+    "name": "Fredrika Robelin",
+    "designation": "Angular Developer",
+    "phone_number": "62 266 811 7020",
+    "experience": 1.4,
+    "joiningDate": "2023-07-02T18:46:10Z"
+  },
+  {
+    "id": 5,
+    "name": "Filide Delmonti",
+    "designation": "Team Leader",
+    "phone_number": "62 111 226 6781",
+    "experience": 4.5,
+    "joiningDate": "2023-02-26T10:53:20Z"
+  },
+  {
+    "id": 6,
+    "name": "Sumner Eggle",
+    "designation": "ASP.Net Developer",
+    "phone_number": "1 737 560 9977",
+    "experience": 4.0,
+    "joiningDate": "2023-08-29T10:51:41Z"
+  },
+  {
+    "id": 7,
+    "name": "Kristien Le Grand",
+    "designation": "Flutter Developer",
+    "phone_number": "51 579 820 7349",
+    "experience": 4.5,
+    "joiningDate": "2024-01-02T07:33:30Z"
+  },
+  {
+    "id": 8,
+    "name": "Arvy Dinesen",
+    "designation": "Web Designer",
+    "phone_number": "7 995 185 0982",
+    "experience": 3.9,
+    "joiningDate": "2023-11-24T19:48:41Z"
+  },
+  {
+    "id": 9,
+    "name": "Brendin Allsop",
+    "designation": "ASP.Net Developer",
+    "phone_number": "48 217 743 0919",
+    "experience": 3.3,
+    "joiningDate": "2023-08-05T04:19:57Z"
+  },
+  {
+    "id": 10,
+    "name": "Harald Stubbs",
+    "designation": "Angular Developer",
+    "phone_number": "263 733 953 4490",
+    "experience": 2.9,
+    "joiningDate": "2024-02-02T05:05:25Z"
+  }
+]

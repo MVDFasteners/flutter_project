@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "title": "Marketing Manager",
+    "assign_to": "Hercules",
+    "date": "2024-03-10T00:14:27Z",
+    "priority": "High",
+    "status": "Pending"
+  },
+  {
+    "id": 2,
+    "title": "Community Outreach Specialist",
+    "assign_to": "Fayre",
+    "date": "2024-10-07T06:24:18Z",
+    "priority": "High",
+    "status": "Pending"
+  },
+  {
+    "id": 3,
+    "title": "Senior Quality Engineer",
+    "assign_to": "Nancy",
+    "date": "2024-01-11T18:22:29Z",
+    "priority": "Medium",
+    "status": "In Progress"
+  },
+  {
+    "id": 4,
+    "title": "VP Sales",
+    "assign_to": "Jemimah",
+    "date": "2024-06-17T17:57:40Z",
+    "priority": "Low",
+    "status": "Finished"
+  },
+  {
+    "id": 5,
+    "title": "Sales Associate",
+    "assign_to": "Raquel",
+    "date": "2024-05-06T11:11:43Z",
+    "priority": "Medium",
+    "status": "Finished"
+  },
+  {
+    "id": 6,
+    "title": "Dental Hygienist",
+    "assign_to": "Vasili",
+    "date": "2024-05-31T21:16:27Z",
+    "priority": "High",
+    "status": "Finished"
+  },
+  {
+    "id": 7,
+    "title": "Occupational Therapist",
+    "assign_to": "Lulu",
+    "date": "2024-03-28T21:07:00Z",
+    "priority": "Medium",
+    "status": "Pending"
+  },
+  {
+    "id": 8,
+    "title": "Analyst Programmer",
+    "assign_to": "Egor",
+    "date": "2023-12-11T08:16:01Z",
+    "priority": "High",
+    "status": "Finished"
+  },
+  {
+    "id": 9,
+    "title": "Research Assistant III",
+    "assign_to": "Max",
+    "date": "2024-02-15T21:59:34Z",
+    "priority": "High",
+    "status": "Pending"
+  },
+  {
+    "id": 10,
+    "title": "Developer II",
+    "assign_to": "Kaela",
+    "date": "2024-06-24T07:29:47Z",
+    "priority": "High",
+    "status": "Cancelled"
+  }
+]

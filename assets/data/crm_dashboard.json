@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "number": 1,
+    "order_id": 8042,
+    "order_date": "2021-10-11T12:23:49Z",
+    "product_name": "Tortillas - Flour, 10",
+    "customer": "Réservés",
+    "total_amount": 23,
+    "status": "Processing"
+  },
+  {
+    "id": 2,
+    "number": 2,
+    "order_id": 1471,
+    "order_date": "2022-02-28T17:11:28Z",
+    "product_name": "Capon - Whole",
+    "customer": "Cinéma",
+    "total_amount": 52,
+    "status": "Processing"
+  },
+  {
+    "id": 3,
+    "number": 3,
+    "order_id": 2310,
+    "order_date": "2021-12-15T21:34:42Z",
+    "product_name": "Iced Tea Concentrate",
+    "customer": "Aí",
+    "total_amount": 19,
+    "status": "Processing"
+  },
+  {
+    "id": 4,
+    "number": 4,
+    "order_id": 3427,
+    "order_date": "2022-08-30T02:06:05Z",
+    "product_name": "Cookie Dough - Double",
+    "customer": "Maïlys",
+    "total_amount": 18,
+    "status": "Delivered"
+  },
+  {
+    "id": 5,
+    "number": 5,
+    "order_id": 2486,
+    "order_date": "2021-08-22T13:07:11Z",
+    "product_name": "Milk 2% 500 Ml",
+    "customer": "Rébecca",
+    "total_amount": 28,
+    "status": "Cancelled"
+  }
+]
