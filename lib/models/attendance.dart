@@ -1,20 +1,20 @@
 class EmployeeLogin {
-  final String? id;
-  final String? user;
-  final String? employee;
-  final String? employeeName;
-  final String? inTime;
-  final String? outTime;
-  final String? inDate;
-  final String? outDate;
-  final String? company;
-  final String? remarks;
-  final String? inLocation;
-  final String? outLocation;
-  final String? inPhoto;
-  final String? outPhoto;
-  final String? message;
-  final int? isLeave;
+  String? id;
+  String? user;
+  String? employee;
+  String? employeeName;
+  String? inTime;
+  String? outTime;
+  String? inDate;
+  String? outDate;
+  String? company;
+  String? remarks;
+  String? inLocation;
+  String? outLocation;
+  String? inPhoto;
+  String? outPhoto;
+  String? message;
+  int? isLeave;
 
   EmployeeLogin({
     this.id,
@@ -32,7 +32,7 @@ class EmployeeLogin {
     this.inPhoto,
     this.outPhoto,
     this.message,
-    this.isLeave
+    this.isLeave,
   });
 
   /// ✅ Convert JSON → Dart Object
@@ -76,5 +76,9 @@ class EmployeeLogin {
       'in_photo': inPhoto,
       'out_photo': outPhoto,
     };
+  }
+
+  Map<String, dynamic> updateImageFile() {
+    return {'name': id, 'in_photo': inPhoto};
   }
 }

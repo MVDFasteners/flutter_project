@@ -81,7 +81,6 @@ class DashboardPageState extends State<DashboardPage>
                     "jayasuryaarulselvam26@gmail.com",
                   );
 
-
                   // await controller.fetchSalesTeamSummary(
                   //   company: "MVD FASTENERS PRIVATE LIMITED",
                   //   fromDate: "2025.01.01",
@@ -301,7 +300,6 @@ class DashboardPageState extends State<DashboardPage>
                       sizes: 'lg-6 md-6 sm-6',
                       child: salesTeamPerformance1(controller),
                     ),
-
                     MyFlexItem(
                       sizes: 'lg-6 md-6 sm-6',
                       child: salesTeamPerformance2(controller),
@@ -792,11 +790,8 @@ class DashboardPageState extends State<DashboardPage>
                     position: LegendPosition.bottom,
                   ),
                   series: [
-
                     PieSeries<ChartSampleData, String>(
-                      dataSource:
-
-                      salesTeamPerformance1Widget(
+                      dataSource: salesTeamPerformance1Widget(
                         controller.salesTeamSummary,
                       ),
                       // <ChartSampleData>[
@@ -944,9 +939,7 @@ class DashboardPageState extends State<DashboardPage>
   }
 
   List<ChartSampleData> salesTeamPerformance1Widget(SalesTeamSummary summary) {
-    return
-
-      summary.data!.map((e) {
+    return summary.data!.map((e) {
       double percent = (e.totalBilled! / summary.totalBilled!.toDouble()) * 100;
       print("$percent - ${e.salesPersonName} - ${e.totalBilled}");
       print("${summary.totalBilled!.toDouble()}");

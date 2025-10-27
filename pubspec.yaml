@@ -65,6 +65,10 @@ dependencies:
   image: ^4.5.4
   geolocator: ^14.0.2
   geocoding: ^4.0.0
+  timelines_plus: ^1.0.8
+  cached_network_image: ^3.4.1
+  image_picker: ^1.2.0
+  flutter_image_compress: ^2.4.0
 
 
 dev_dependencies:

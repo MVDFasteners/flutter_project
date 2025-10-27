@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/auth/login_controller.dart';
 import 'package:flatten/controllers/my_controller.dart';
+import 'package:flatten/controllers/mycontroller/camera_controller.dart';
 import 'package:flatten/controllers/other/syncfusion_charts_controller.dart';
 import 'package:flatten/helpers/extensions/extensions.dart';
 import 'package:flatten/helpers/services/auth_service.dart';
@@ -16,6 +18,7 @@ import 'package:flatten/models/sales_team_summary.dart';
 import 'package:flatten/models/sales_yearly_summary.dart';
 import 'package:flatten/models/user.dart';
 import 'package:flatten/myPages/locaiton_service.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,6 +31,7 @@ class AttendanceController extends MyController {
   List<EmployeeLogin> employeeLoginList = [];
   EmployeeLogin employeeLogin = EmployeeLogin();
   final LoginController loginCtrl = Get.put(LoginController());
+  CameraControllerNew cameraControllerNew = Get.put(CameraControllerNew());
 
   String? inImage;
   String? outImage;
@@ -92,7 +96,7 @@ class AttendanceController extends MyController {
       print("To: ${dateFilter['toDate']}");
 
       fetchLoginList(
-        company: "MVD FASTENERS PRIVATE LIMITED",
+        company: loginCtrl.userModel.company,
         fromDate: dateFilter['fromDate'],
         toDate: dateFilter['toDate'],
         employeeId: loginCtrl.userModel.employeeId,
@@ -185,7 +189,7 @@ class AttendanceController extends MyController {
     }
   }
 
-  _findInOut(List<EmployeeLogin> loginList) {
+  void _findInOut(List<EmployeeLogin> loginList) {
     if (loginList.isNotEmpty) {
       DateTime now = DateTime.now();
       DateTime currentDate = DateTime(now.year, now.month, now.day);
@@ -207,7 +211,6 @@ class AttendanceController extends MyController {
     } else {
       loginStatusCurrent = "IN";
     }
-    update();
   }
 
   Future<void> fetchLoginList({
@@ -240,17 +243,20 @@ class AttendanceController extends MyController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final List<dynamic> list = data['message'] ?? [];
+        final List<dynamic> list = data['message']['loginList'] ?? [];
+        final List<dynamic> leaveList = data['message']['eventList'] ?? [];
+
         employeeLoginList = list.map((e) => EmployeeLogin.fromJson(e)).toList();
+
         presentDays = 0;
         absentDays = 0;
         halfDays = 0;
         permissionsDays = 0;
-        _calculatePresentDetails(employeeLoginList);
-        _findInOut(employeeLoginList);
-        print("✅ Total Logins: ${employeeLoginList.length}");
-        for (var item in employeeLoginList) {
-          print("${item.employeeName} - ${item.inDate} - ${item.inTime}");
+        if (employeeLoginList.isNotEmpty) {
+          _findInOut(employeeLoginList);
+          _calculatePresentDetails(employeeLoginList, leaveList);
+        } else {
+          loginStatusCurrent = "IN";
         }
         update();
       } else {
@@ -261,7 +267,10 @@ class AttendanceController extends MyController {
     }
   }
 
-  Future<void> saveLoginEntry({File? value}) async {
+  Future<void> saveLoginEntry({
+    required Uint8List compressedBytes,
+    required String fileName,
+  }) async {
     DateTime now = DateTime.now();
     String currentDate = DateFormat('yyyy-MM-dd').format(now);
     String currentTime = DateFormat('HH:mm:ss').format(now);
@@ -282,12 +291,6 @@ class AttendanceController extends MyController {
       print(lat + long);
       address = await LocationService().getAddressFromLatLng(lat, long);
     }
-
-    String? photoUrl;
-    if (value != null) {
-      photoUrl = await uploadImageToERPNext(value);
-    }
-
     if (loginStatusCurrent == "IN") {
       newLogin = EmployeeLogin(
         employee: loginCtrl.userModel.employeeId,
@@ -295,11 +298,21 @@ class AttendanceController extends MyController {
         user: loginCtrl.userModel.userId,
         inDate: currentDate,
         inTime: currentTime,
-        inLocation: "address",
-        inPhoto: photoUrl,
+        inLocation: address,
+        // inPhoto: fileUrl,
       );
     } else {
       if (newLogin.id != null) {
+        String? fileUrl = await cameraControllerNew.uploadImage(
+          parentDocType: "Employee Login",
+          parentDocName: newLogin.id!,
+          fieldName: "out_photo",
+          imageBytes: compressedBytes,
+          fileName: fileName,
+        );
+
+        print(fileUrl);
+
         newLogin = EmployeeLogin(
           id: newLogin.id,
           employee: loginCtrl.userModel.employeeId,
@@ -310,9 +323,9 @@ class AttendanceController extends MyController {
           inLocation: newLogin.inLocation,
           outDate: currentDate,
           outTime: currentTime,
-          outLocation: "address",
+          outLocation: address,
           inPhoto: newLogin.inPhoto,
-          outPhoto: photoUrl,
+          outPhoto: fileUrl,
         );
       } else {
         toastMessage(message: "Id Not found to Update Log Out");
@@ -339,6 +352,16 @@ class AttendanceController extends MyController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        String? loginId = data['message']['name'];
+        if (loginId != null) {
+          if (loginStatusCurrent == "IN") {
+            await updateLoginEntryIN(
+              fileName: fileName,
+              compressedBytes: compressedBytes,
+              loginId: loginId,
+            );
+          }
+        }
 
         Map<String, String> dateFilter = {};
 
@@ -376,13 +399,56 @@ class AttendanceController extends MyController {
     update();
   }
 
+  Future<bool?> updateLoginEntryIN({
+    required String loginId,
+    required Uint8List compressedBytes,
+    required String fileName,
+  }) async {
+    String? fileUrl = await cameraControllerNew.uploadImage(
+      parentDocType: "Employee Login",
+      parentDocName: loginId,
+      fieldName: "in_photo",
+      imageBytes: compressedBytes,
+      fileName: fileName,
+    );
+
+    if (fileUrl != null) {
+      final url = Uri.parse("$backendUrl/save_user_login");
+      final Map<String, dynamic> body = {
+        'cookie': AuthService.sessionId,
+        'data': {'name': loginId, 'in_photo': fileUrl},
+      };
+
+      try {
+        final response = await http.post(
+          url,
+          headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+          body: jsonEncode(body),
+        );
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          String? value = data['message']['status'];
+          if (value != null && value == "updated") {
+            return true;
+          }
+        } else {
+          print("❌ Error ${response.statusCode}: ${response.body}");
+        }
+      } catch (e) {
+        print("⚠️ Error: ${e.toString()}");
+      }
+    }
+
+    update();
+  }
+
   Future<String?> uploadImageToERPNext(File imageFile) async {
     final url = Uri.parse("$backendUrl/upload_file");
     final request = http.MultipartRequest('POST', url);
     request.headers['Cookie'] = AuthService.sessionId!;
     request.fields['is_private'] = '0'; // or '1' for private files
     request.fields['folder'] = 'Home'; // optional: specify folder
-
     request.files.add(
       await http.MultipartFile.fromPath('file', imageFile.path),
     );
@@ -413,23 +479,51 @@ class AttendanceController extends MyController {
   int halfDays = 0;
   int permissionsDays = 0;
 
-  void _calculatePresentDetails(List<EmployeeLogin> loginList) {
+  void _calculatePresentDetails(
+    List<EmployeeLogin> loginList,
+    List<dynamic> leaveList,
+  ) {
+    print("indate form loginlist${loginList[0].inDate}");
+
+    // print("indate form loginlist${leaveList[0]['date']}");
+    List<String?>? leaveDateList = [];
+    Set<dynamic> leaveDates = {};
+    Set<String> punchedInDays = {};
+
+    if (leaveList.isNotEmpty) {
+      leaveDates = leaveList.map((e) => e['date']).toSet();
+      leaveDateList = loginList
+          .where((login) => leaveDates.contains(login.inDate))
+          .map((login) => login.inDate)
+          .toList();
+    }
+
+    print("date filtered list$leaveDateList");
+
+    List<String> datList = completedDateListPerMonth();
+
+    Set<String> dataSet = datList.toSet();
+
     for (EmployeeLogin log in loginList) {
-      if (log.isLeave == 1) {
-        presentDays++;
-        continue;
+      if (log.inDate != null) {
+        punchedInDays.add(log.inDate!);
       }
+    }
 
-      if (log.inTime == null || log.inTime == "") {
-        absentDays++;
-        continue; // skip to next log
-      }
+    Set<String> notPunchedList = dataSet.difference(punchedInDays);
+    Set absentDaysSetN = notPunchedList.difference(leaveDates);
 
+    print(absentDaysSetN);
+    absentDaysSetN.toList();
+    absentDays = absentDaysSetN.length;
+    presentDays = leaveList.length;
+    for (EmployeeLogin log in loginList) {
+      // check half days..................
       if (log.inTime != null && log.outTime == null || log.outTime == "") {
         halfDays++;
         continue;
       }
-
+      // check present days ..................
       if (log.inTime != null && log.outTime != null || log.outTime != "") {
         Map<String, int> value = calculateWorkHours(log.inTime!, log.outTime!);
         int hours = value['hours'] ?? 0;
@@ -451,5 +545,19 @@ class AttendanceController extends MyController {
     print("absentDays: $absentDays");
     print("halfDays: $halfDays");
     print("permissionDays: $permissionsDays");
+  }
+
+  List<String> completedDateListPerMonth() {
+    DateTime today = DateTime.now();
+    int year = today.year;
+    int month = today.month;
+    int date = today.day;
+    List<String> completedDates = [];
+    for (int day = 1; day <= date; day++) {
+      completedDates.add("$year-$month-$day");
+    }
+    print("Days completed in month: ${completedDates.length}");
+    print("List of completed dates:");
+    return completedDates;
   }
 }

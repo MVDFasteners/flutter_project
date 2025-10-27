@@ -84,11 +84,11 @@ List<GetPage> getPageRoute() {
       page: () => FirstScreen(),
       middlewares: [AuthMiddleware()],
     ),
-    GetPage(
-      name: '/dashboard',
-      page: () => DashboardPage(),
-      middlewares: [AuthMiddleware()],
-    ),
+    // GetPage(
+    //   name: '/dashboard',
+    //   page: () => DashboardPage(),
+    //   middlewares: [AuthMiddleware()],
+    // ),
     GetPage(
       name: '/stock',
       page: () => Stock(),

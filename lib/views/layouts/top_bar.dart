@@ -241,14 +241,16 @@ class _TopBarState extends State<TopBar>
                     ClipRRect(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       borderRadius: BorderRadius.circular(2),
-                      child: user.image != null
+                      child:
+                      user.image != null
                           ? CircleAvatar(
                               radius: 50,
                               backgroundImage: NetworkImage(
                                 "http://192.168.1.143:8000${user.image!}",
                               ),
                             )
-                          : const CircleAvatar(
+                          :
+                      const CircleAvatar(
                               radius: 50,
                               child: Icon(Icons.person, size: 50),
                             ),

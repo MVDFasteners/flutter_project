@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/dashboard/crm_dashboard_controller.dart';
+import 'package:flatten/controllers/mycontroller/camera_controller.dart';
 import 'package:flatten/helpers/theme/app_style.dart';
 import 'package:flatten/helpers/utils/mixins/ui_mixin.dart';
 import 'package:flatten/helpers/utils/my_shadow.dart';
@@ -39,6 +41,7 @@ class Attendance extends StatefulWidget {
 class _AttendanceState extends State<Attendance>
     with SingleTickerProviderStateMixin, UIMixin {
   late AttendanceController controller;
+  CameraControllerNew cameraControllerNew = Get.put(CameraControllerNew());
 
   @override
   void initState() {
@@ -59,10 +62,29 @@ class _AttendanceState extends State<Attendance>
               style: TextStyle(fontSize: 22),
             ),
             onPressed: () async {
+              // Uint8List? compressedBytes;
+              // String? fileUrl;
+              // Map<String, dynamic>? value = await cameraControllerNew.openCam(
+              //   isFront: true,
+              // );
+              //
+              // if (value != null) {
+              //   compressedBytes = value['compressedBytes'];
+              //   fileUrl = value['file_name'];
+              // }
+              //
+              // if (fileUrl != null && compressedBytes != null) {
+              //   controller.saveLoginEntry(
+              //     fileName: fileUrl,
+              //     compressedBytes: compressedBytes,
+              //   );
+              // }
+
               File? value = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CameraPageNew()),
               );
+
               print(value);
             },
           );

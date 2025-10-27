@@ -66,7 +66,7 @@ class LoginController extends MyController {
         Uri.parse(
           ModalRoute.of(Get.context!)?.settings.name ?? "",
         ).queryParameters['next'] ??
-        "/dashboard";
+        "/";
     Get.toNamed(nextUrl);
 
     // if (basicValidator.validateForm()) {

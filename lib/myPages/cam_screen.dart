@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flatten/app_constant.dart';
 import 'package:flatten/helpers/theme/app_style.dart';
 import 'package:flatten/helpers/utils/mixins/ui_mixin.dart';
 import 'package:flatten/models/attendance.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:flatten/controllers/mycontroller/attendance_controller.dart';
@@ -19,7 +22,7 @@ class CameraPageNew extends StatefulWidget {
 class _CameraPageNewState extends State<CameraPageNew>
     with SingleTickerProviderStateMixin, UIMixin {
   late CameraController _camController;
-  late AttendanceController _attendanceCtrl;
+  late AttendanceController attendanceController;
 
   bool _isCameraInitialized = false;
   bool _isloading = false;
@@ -27,7 +30,7 @@ class _CameraPageNewState extends State<CameraPageNew>
   @override
   void initState() {
     super.initState();
-    _attendanceCtrl = Get.put(AttendanceController(this));
+    attendanceController = Get.put(AttendanceController(this));
     _initializeCamera();
   }
 
@@ -59,7 +62,7 @@ class _CameraPageNewState extends State<CameraPageNew>
     }
   }
 
-  Future<File?> _capturePhoto(BuildContext context) async {
+  Future<Map<String, dynamic>?> _capturePhoto(BuildContext context) async {
     if (!_camController.value.isInitialized) {
       toastMessage(message: "Camera is not initialized");
       setState(() => _isloading = false);
@@ -68,17 +71,27 @@ class _CameraPageNewState extends State<CameraPageNew>
     try {
       final XFile imageFile = await _camController.takePicture();
       File capturedImage = File(imageFile.path);
-      toastMessage(
-        message: "Photo captured successfully. Please wait, verifying...",
+
+      final String fileName = capturedImage.path.split('/').last;
+      print("Captured File Name: $fileName");
+
+      final compressedBytes = await FlutterImageCompress.compressWithFile(
+        capturedImage.absolute.path,
+        minWidth: 800,
+        minHeight: 800,
+        quality: 50,
       );
-      return capturedImage;
+
+      Map<String, dynamic> values = {};
+      values['fileName'] = fileName;
+      values['compressedBytes'] = compressedBytes;
+      return values;
     } catch (e) {
       setState(() => _isloading = false);
       print("Error capturing image: $e");
       toastMessage(message: "Error capturing image");
       return null;
     }
-    return null;
   }
 
   @override
@@ -93,7 +106,7 @@ class _CameraPageNewState extends State<CameraPageNew>
           if (_isCameraInitialized)
             Positioned.fill(
               child: Transform.scale(
-                scaleX: -1, // Flip horizontally for front camera
+                scaleX: -1,
                 child: CameraPreview(_camController),
               ),
             ),
@@ -108,13 +121,30 @@ class _CameraPageNewState extends State<CameraPageNew>
                       backgroundColor: AppTheme.primaryColor,
                       onPressed: () async {
                         setState(() => _isloading = true);
-                        File? value = await _capturePhoto(context);
+
+                        Uint8List? compressedBytes;
+                        String? fileUrl;
+
+                        Map<String, dynamic>? value = await _capturePhoto(
+                          context,
+                        );
+
+                        
                         if (value != null) {
-                          await _attendanceCtrl.saveLoginEntry(value: value);
+                          compressedBytes = value['compressedBytes'];
+                          fileUrl = value['fileName'];
+
+                          if (fileUrl != null && compressedBytes != null) {
+                            await attendanceController.saveLoginEntry(
+                              fileName: fileUrl,
+                              compressedBytes: compressedBytes,
+                            );
+                          }
                           setState(() => _isloading = false);
-                          Navigator.pop(context, value);
+                          Navigator.pop(context);
                         } else {
-                          Navigator.pop(context, value);
+                          setState(() => _isloading = false);
+                          Navigator.pop(context);
                         }
                       },
                       child: const Icon(Icons.camera),

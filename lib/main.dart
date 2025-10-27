@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
           darkTheme: AppTheme.darkTheme,
           themeMode: ThemeCustomizer.instance.theme,
           navigatorKey: NavigationService.navigatorKey,
-          initialRoute: "/dashboard",
+          initialRoute: "/",
           getPages: getPageRoute(),
           // onGenerateRoute: (_) => generateRoute(context, _),
           builder: (context, child) {
