@@ -73,8 +73,8 @@ class AuthMiddleware extends GetMiddleware {
   RouteSettings? redirect(String? route) {
     RouteSettings? value = AuthService.sessionId != null
         ? null
-        : RouteSettings(name: '/attendance');
-    // : RouteSettings(name: '/auth/login');
+        // : RouteSettings(name: '/attendance');
+        : RouteSettings(name: '/auth/login');
     return value;
   }
 }
