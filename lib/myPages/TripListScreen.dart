@@ -115,7 +115,7 @@ class _TripListScreenState extends State<TripListScreen>
               ),
               MySpacing.height(flexSpacing),
               Expanded(
-                flex: 7,
+                flex: 5,
                 child: RefreshIndicator(
                   onRefresh: controller.refreshItems,
                   child: ListView.builder(
@@ -461,20 +461,20 @@ class _TripListScreenState extends State<TripListScreen>
           //   child: Icon(icon, size: 30, color: color),
           //   // Icon(Icons.absent, size: 70),
           // ),
-          MySpacing.width(16),
+          MySpacing.width(8),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MyText.bodyMedium(
                 title,
                 muted: true,
-                fontSize: 20,
+                fontSize: 16,
                 color: Colors.white,
               ),
               MyText.bodyMedium(
                 value,
                 fontWeight: 700,
-                fontSize: 20,
+                fontSize: 18,
                 color: Colors.white,
               ),
             ],

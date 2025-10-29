@@ -46,6 +46,9 @@ class _CheckinDetailsState extends State<CheckinDetails>
   @override
   Widget build(BuildContext context) {
     return Layout(
+      leadingWidget: IconButton(onPressed: () {
+        Navigator.pop(context);
+      }, icon: Icon(Icons.arrow_back)),
       scrollNeed: false,
       child: GetBuilder(
         init: controller,

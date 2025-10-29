@@ -26,6 +26,7 @@ class Layout extends StatelessWidget {
   final bool? scrollNeed;
   final Widget? floatingAction;
   final Widget? bottomBar;
+  final Widget? leadingWidget;
 
   final LayoutController controller = LayoutController();
   final LoginController loginController = Get.put(LoginController());
@@ -36,6 +37,7 @@ class Layout extends StatelessWidget {
   Layout({
     super.key,
     this.child,
+    this.leadingWidget,
     this.anyWidget,
     this.scrollNeed = true,
     this.floatingAction,
@@ -66,6 +68,7 @@ class Layout extends StatelessWidget {
       key: controller.scaffoldKey,
       bottomNavigationBar: bottomBar,
       appBar: AppBar(
+        leading: leadingWidget,
         elevation: 0,
         actions: [
           InkWell(

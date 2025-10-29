@@ -21,11 +21,17 @@ class PlaceList extends StatelessWidget {
     );
 
     return Layout(
+      leadingWidget: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
       scrollNeed: false,
       bottomBar: GetBuilder<PlaceListController>(
         builder: (controller) {
           return SizedBox(
-            height: 140,
+            height: 180,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -116,7 +122,7 @@ class PlaceList extends StatelessWidget {
     return [
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text("Total Distance Traveled", style: TextStyle(fontSize: 30)),
+        child: Text("Total Distance Traveled", style: TextStyle(fontSize: 16)),
       ),
       Spacer(),
       Padding(
@@ -150,7 +156,7 @@ class PlaceList extends StatelessWidget {
               Navigator.pop(context);
             });
           },
-          child: Text("End My Trip", style: TextStyle(fontSize: 24)),
+          child: Text("End My Trip", style: TextStyle(fontSize: 16)),
         ),
       ),
       Spacer(),
@@ -181,7 +187,7 @@ class PlaceList extends StatelessWidget {
                     toastMessage(message: "Cannot able to fetch distance");
                   }
                 },
-                child: Text("Update Location", style: TextStyle(fontSize: 24)),
+                child: Text("Update Location", style: TextStyle(fontSize: 16)),
               ),
       ),
     ];

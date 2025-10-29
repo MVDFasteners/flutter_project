@@ -143,7 +143,7 @@ class _AttendanceState extends State<Attendance>
                         ),
                       ),
                       Expanded(
-                        flex: 3,
+                        flex: 4,
                         child: Column(
                           children: [
                             if (Responsive.isMobile(context))
@@ -361,7 +361,7 @@ class _AttendanceState extends State<Attendance>
   Widget buildTopSeller(String title, String value) {
     return MyCard(
       shadow: MyShadow(elevation: 1),
-      paddingAll: 8,
+      paddingAll: 4,
       margin: MySpacing.right(5),
       borderRadiusAll: AppStyle.buttonRadius.medium,
       // width: 300,
@@ -372,13 +372,13 @@ class _AttendanceState extends State<Attendance>
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Icon(
               Icons.date_range,
-              size: 50,
+              size: 30,
               color: AppTheme.primaryColor,
             ),
 
             // Icon(Icons.absent, size: 70),
           ),
-          MySpacing.width(16),
+          MySpacing.width(8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -409,7 +409,9 @@ class _AttendanceState extends State<Attendance>
           Row(
             children: [
               Icon(Icons.location_on),
-              MyText.bodyMedium(location, fontWeight: 600),
+              SizedBox(
+                  width: 200,
+                  child: MyText.bodyMedium(location, fontWeight: 600, overflow: TextOverflow.ellipsis,)),
               Spacer(),
               MyContainer(
                 paddingAll: 8,
