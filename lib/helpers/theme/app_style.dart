@@ -93,10 +93,11 @@ class AppTheme {
     dividerColor: Color(0xffdddddd),
 
     /// Bottom AppBar Theme
-    bottomAppBarTheme: const BottomAppBarThemeData(
+    bottomAppBarTheme: const BottomAppBarTheme(
       color: Color(0xffeeeeee),
       elevation: 2,
     ),
+
 
 
     /// Tab bar Theme -header file
@@ -188,10 +189,11 @@ class AppTheme {
         foregroundColor: Colors.white),
 
     /// Bottom AppBar Theme
-    bottomAppBarTheme: const BottomAppBarThemeData(
+    bottomAppBarTheme: const BottomAppBarTheme(
       color: Color(0xffeeeeee),
       elevation: 2,
     ),
+
 
     /// Tab bar Theme
     tabBarTheme: TabBarThemeData(
