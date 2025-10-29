@@ -40,6 +40,12 @@ class _TripListScreenState extends State<TripListScreen>
   @override
   Widget build(BuildContext context) {
     return Layout(
+      leadingWidget: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back),
+      ),
       floatingAction: GetBuilder(
         init: controller,
         builder: (controller) {
@@ -82,40 +88,60 @@ class _TripListScreenState extends State<TripListScreen>
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            MyText.titleMedium(
-                              "TRIP LIST".tr(),
-                              fontSize: 18,
-                              fontWeight: 600,
-                            ),
-                            Spacer(),
-                            IconButton(
-                              onPressed: () async {
-                                await controller.fetchTripListWithFilters();
-                              },
-                              icon: Icon(Icons.refresh),
-                            ),
-                            _popUpMenuBuilderForYearlySummary(controller),
-                            MySpacing.width(flexSpacing),
-                            _popUpMenuBuilderForMonthlySummary(controller),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          MyText.titleMedium(
+                            "TRIP LIST".tr(),
+                            fontSize: 18,
+                            fontWeight: 600,
+                          ),
+                          Spacer(),
+                          IconButton(
+                            onPressed: () async {
+                              await controller.fetchTripListWithFilters();
+                            },
+                            icon: Icon(Icons.refresh),
+                          ),
+                          _popUpMenuBuilderForYearlySummary(controller),
+                          MySpacing.width(flexSpacing),
+                          _popUpMenuBuilderForMonthlySummary(controller),
+                        ],
                       ),
-                      MySpacing.height(flexSpacing),
-                      Expanded(
-                        flex: 3,
-                        child: Row(children: [..._halfPermission(controller)]),
-                      ),
+                      Row(children: [..._halfPermission(controller)]),
+                      // Expanded(
+                      //   flex: 1,
+                      //   child: Row(
+                      //     children: [
+                      //       MyText.titleMedium(
+                      //         "TRIP LIST".tr(),
+                      //         fontSize: 18,
+                      //         fontWeight: 600,
+                      //       ),
+                      //       Spacer(),
+                      //       IconButton(
+                      //         onPressed: () async {
+                      //           await controller.fetchTripListWithFilters();
+                      //         },
+                      //         icon: Icon(Icons.refresh),
+                      //       ),
+                      //       _popUpMenuBuilderForYearlySummary(controller),
+                      //       MySpacing.width(flexSpacing),
+                      //       _popUpMenuBuilderForMonthlySummary(controller),
+                      //     ],
+                      //   ),
+                      // ),
+                      // MySpacing.height(flexSpacing),
+                      // Expanded(
+                      //   flex: 3,
+                      //   child: Row(children: [..._halfPermission(controller)]),
+                      // ),
                     ],
                   ),
                 ),
               ),
               MySpacing.height(flexSpacing),
               Expanded(
-                flex: 5,
+                flex: 4,
                 child: RefreshIndicator(
                   onRefresh: controller.refreshItems,
                   child: ListView.builder(

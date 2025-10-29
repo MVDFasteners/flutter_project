@@ -1,4 +1,5 @@
 import 'package:flatten/helpers/services/auth_service.dart';
+import 'package:flatten/myPages/Home%20Page.dart';
 import 'package:flatten/myPages/TripListScreen.dart';
 import 'package:flatten/myPages/lead_screen.dart';
 import 'package:flatten/views/apps/chat/chats_page.dart';
@@ -72,23 +73,30 @@ class AuthMiddleware extends GetMiddleware {
   RouteSettings? redirect(String? route) {
     RouteSettings? value = AuthService.sessionId != null
         ? null
-        : RouteSettings(name: '/auth/login');
+        : RouteSettings(name: '/attendance');
+    // : RouteSettings(name: '/auth/login');
     return value;
   }
 }
 
 List<GetPage> getPageRoute() {
   var routes = [
-    GetPage(
-      name: '/',
-      page: () => FirstScreen(),
-      middlewares: [AuthMiddleware()],
-    ),
+    // GetPage(
+    //   name: '/',
+    //   page: () => FirstScreen(),
+    //   middlewares: [AuthMiddleware()],
+    // ),
     // GetPage(
     //   name: '/dashboard',
     //   page: () => DashboardPage(),
     //   middlewares: [AuthMiddleware()],
     // ),
+    GetPage(
+      name: '/',
+      page: () => CompanyHomePage(),
+      // middlewares: [AuthMiddleware()],
+    ),
+
     GetPage(
       name: '/stock',
       page: () => Stock(),
@@ -108,7 +116,7 @@ List<GetPage> getPageRoute() {
     GetPage(
       name: '/login_details',
       page: () => CheckinDetails(),
-      middlewares: [AuthMiddleware()],
+      // middlewares: [AuthMiddleware()],
     ),
 
     GetPage(
@@ -404,13 +412,12 @@ List<GetPage> getPageRoute() {
 
   return routes
       .map(
-        (e) =>
-        GetPage(
+        (e) => GetPage(
           name: e.name,
           page: e.page,
           middlewares: e.middlewares,
           transition: Transition.noTransition,
         ),
-  )
+      )
       .toList();
 }

@@ -52,6 +52,12 @@ class _AttendanceState extends State<Attendance>
   @override
   Widget build(BuildContext context) {
     return Layout(
+      leadingWidget: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back),
+      ),
       floatingAction: GetBuilder(
         init: controller,
         builder: (controller) {
@@ -99,13 +105,11 @@ class _AttendanceState extends State<Attendance>
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Row(
+                  child: Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
                             MyText.titleMedium(
                               "ATTENDANCE".tr(),
@@ -113,60 +117,43 @@ class _AttendanceState extends State<Attendance>
                               fontWeight: 600,
                             ),
                             Spacer(),
-                            IconButton(
-                              onPressed: () async {
-                                // if (controller.selectedYear != null &&
-                                //     controller.selectedMonth != null ) {
-                                //   Map<String, String> dateFilter = {};
-                                //   dateFilter = controller.getMonthDateRange(int.parse(controller.selectedYear!), controller.selectedMonth!);
-                                //   print("From: ${dateFilter['fromDate']}");
-                                //   print("To: ${dateFilter['toDate']}");
-                                //
-                                //   controller.fetchLoginList(
-                                //     company: "MVD FASTENERS PRIVATE LIMITED",
-                                //     fromDate: dateFilter['fromDate'],
-                                //     toDate: dateFilter['toDate'],
-                                //     employeeId: "8122140852",
-                                //   );
-                                // }
-
-                                // controller.calculatePresentDetails(
-                                //   controller.employeeLoginList,
-                                // );
-                              },
-                              icon: Icon(Icons.refresh),
-                            ),
                             _popUpMenuBuilderForYearlySummary(controller),
                             MySpacing.width(flexSpacing),
                             _popUpMenuBuilderForMonthlySummary(controller),
                           ],
                         ),
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Column(
+                        SizedBox(height: 4),
+                        Column(
+                          // Row(children: [..._presentAbsent()]),
+                          // Row(children: [..._halfPermission()]),
                           children: [
-                            if (Responsive.isMobile(context))
-                              Row(children: [..._presentAbsent()])
-                            else
-                              _responsiveTitleHead(),
-                            MySpacing.height(flexSpacing),
-                            if (Responsive.isMobile(context))
-                              Row(children: [..._halfPermission()]),
+                            Row(children: [..._presentAbsent()]),
+                            SizedBox(height: 6),
+                            Row(children: [..._halfPermission()]),
+                            // if (Responsive.isMobile(context))
+                            //   Row(children: [..._presentAbsent()])
+                            // else
+                            //   _responsiveTitleHead(),
+                            // MySpacing.height(flexSpacing),
+                            // if (Responsive.isMobile(context))
+                            //   Row(children: [..._halfPermission()]),
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
               Expanded(
                 flex: 3,
                 child: controller.employeeLoginList.isEmpty
-                    ? Center(
-                        child: Text(
-                          "No Records Found",
-                          style: TextStyle(fontSize: 20),
+                    ? Container(
+                        // color: Colors.blue,
+                        child: Center(
+                          child: Text(
+                            "No Records Found",
+                            style: TextStyle(fontSize: 20),
+                          ),
                         ),
                       )
                     : ListView.builder(
@@ -361,6 +348,7 @@ class _AttendanceState extends State<Attendance>
   Widget buildTopSeller(String title, String value) {
     return MyCard(
       shadow: MyShadow(elevation: 1),
+      // padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
       paddingAll: 4,
       margin: MySpacing.right(5),
       borderRadiusAll: AppStyle.buttonRadius.medium,
@@ -410,8 +398,13 @@ class _AttendanceState extends State<Attendance>
             children: [
               Icon(Icons.location_on),
               SizedBox(
-                  width: 200,
-                  child: MyText.bodyMedium(location, fontWeight: 600, overflow: TextOverflow.ellipsis,)),
+                width: 200,
+                child: MyText.bodyMedium(
+                  location,
+                  fontWeight: 600,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               Spacer(),
               MyContainer(
                 paddingAll: 8,

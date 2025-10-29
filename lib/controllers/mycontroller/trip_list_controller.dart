@@ -169,7 +169,6 @@ class TripListController extends GetxController {
     }
   }
 
-
   Future<void> fetchTripList({
     String? company,
     String? fromDate,
@@ -218,9 +217,7 @@ class TripListController extends GetxController {
           travelLogs.clear();
         }
 
-        travelLogs.addAll(
-          tripsJson.map((e) => Trip.fromJson(e)).toList(),
-        );
+        travelLogs.addAll(tripsJson.map((e) => Trip.fromJson(e)).toList());
 
         offset += tripsJson.length;
         hasMore = tripsJson.length == limitPageLength;
@@ -236,7 +233,6 @@ class TripListController extends GetxController {
     isLoading = false;
     update();
   }
-
 
   // Future<void> fetchTripList({
   //   String? company,
