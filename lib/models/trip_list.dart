@@ -19,7 +19,7 @@ class TripImage {
       image: json['image'],
       description: json['description'] ?? "",
       childId: json['travel_log_id'] ?? "",
-      parentId: json['parent'] ?? ""
+      parentId: json['parent'] ?? "",
     );
   }
 
@@ -99,6 +99,7 @@ class Trip {
   int? totalPending;
   int? totalCompleted;
   String? company;
+
   // List<RoutePoint>? routes;
 
   Trip({
@@ -131,8 +132,8 @@ class Trip {
       totalDistance: (json['total_distance_km'] ?? 0).toDouble(),
       status: json['status'] ?? '',
       creation: json['creation'] ?? '',
-      totalCompleted: json['total_completed'] ?? '',
-      totalPending: json['total_pending'] ?? '',
+      totalCompleted: (json['total_completed'] ?? 0).toInt(),
+      totalPending: (json['total_pending'] ?? 0).toInt(),
       company: json['company'] ?? '',
 
       // routes: routePoints,
@@ -149,7 +150,7 @@ class Trip {
       'total_distance_km': totalDistance,
       'status': status,
       'creation': creation,
-      'company':company
+      'company': company,
       // 'routes': routes?.map((e) => e.toJson()).toList(),
     };
   }

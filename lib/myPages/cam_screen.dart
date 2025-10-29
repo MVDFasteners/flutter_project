@@ -135,7 +135,7 @@ class _CameraPageNewState extends State<CameraPageNew>
                           fileUrl = value['fileName'];
 
                           if (fileUrl != null && compressedBytes != null) {
-                            await attendanceController.saveLoginEntry(
+                            await attendanceController.saveLoginEntryDirect(
                               fileName: fileUrl,
                               compressedBytes: compressedBytes,
                             );

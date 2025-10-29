@@ -142,24 +142,69 @@ class LoginController extends MyController {
     update();
   }
 
+  Future<String?> loginToERPNext() async {
+    loading = true;
+    update();
+    Map<String, dynamic> data = basicValidator.getData();
+    String email = data['email'];
+    String password = data['password'];
+    var url = Uri.parse("$baseUrl/api/method/login");
+
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: {"usr": email, "pwd": password},
+          )
+          .timeout(Duration(seconds: 20)); // ⏳ Set timeout (10 seconds)
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        print("body$body");
+        String? sessionId = response.headers['set-cookie'];
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        if (sessionId != null) {
+          await pref.setString("session_id", sessionId);
+          await pref.setString("email", email);
+          AuthService.sessionId = sessionId;
+          toastMessage(message: "Login  Success");
+          print("✅ Session stored: $sessionId");
+          await fetchUserByEmail(email);
+          loading = false;
+          update();
+          goToDashboard();
+        }
+      } else {
+        toastMessage(message: "Login Failed: ${response.body}");
+        loading = false;
+        update();
+        print('❌ Login failed: ${response.body}');
+      }
+    } catch (e) {
+      loading = false;
+      update();
+      print('⚠️ Error during login: $e');
+    }
+    return null;
+  }
+
   Future<void> fetchUserByEmail(String email) async {
     if (AuthService.sessionId == null) {
       print("❌ No session found. Please login first.");
       return;
     }
 
-    final url = Uri.parse("$backendUrl/get_user");
-
-    final Map<String, dynamic> body = {
-      'cookie': AuthService.sessionId,
-      'email': email,
-    };
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_user_by_email?email=$email",
+    );
 
     try {
-      final response = await http.post(
+      final response = await http.get(
         url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-        body: jsonEncode(body),
+        headers: {
+          'Cookie': AuthService.sessionId!,
+          'Content-Type': 'application/json',
+        },
       );
 
       if (response.statusCode == 200) {
@@ -170,24 +215,74 @@ class LoginController extends MyController {
           return;
         }
 
-        // Create User model from JSON
-        userModel = UserModel.fromJson(data);
+        userModel = UserModel.fromJson(data['message'] ?? data);
         await fetchImageBase64();
 
         print(
-          "User fetched: ${userModel!.stockUser}, ${userModel!.accountUser}, ${userModel!.company}, ${userModel!.image}",
+          "✅ User fetched: ${userModel.fullName}, ${userModel.company}, ${userModel.department}",
         );
 
-        update(); // if inside GetX controller
+        update();
       } else {
         print("❌ HTTP Error ${response.statusCode}: ${response.body}");
       }
     } on SocketException {
-      print("⚠️ Connection Error: Cannot reach backend ($backendUrl)");
+      print("⚠️ Connection Error: Cannot reach backend ($baseUrl)");
     } catch (e) {
       print("⚠️ Unexpected Error: ${e.toString()}");
     }
   }
+
+  // Future<void> fetchUserByEmail(String email) async {
+  //   if (AuthService.sessionId == null) {
+  //     print("❌ No session found. Please login first.");
+  //     return;
+  //   }
+  //
+  //   // final url = Uri.parse("$backendUrl/get_user");
+  //
+  //   final url = Uri.parse(
+  //     "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_user_by_email?email=$email",
+  //   );
+  //
+  //   final Map<String, dynamic> body = {
+  //     'cookie': AuthService.sessionId,
+  //     'email': email,
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //
+  //       if (data.containsKey('error')) {
+  //         print("❌ Error: ${data['error']}");
+  //         return;
+  //       }
+  //
+  //       // Create User model from JSON
+  //       userModel = UserModel.fromJson(data);
+  //       await fetchImageBase64();
+  //
+  //       print(
+  //         "User fetched: ${userModel!.stockUser}, ${userModel!.accountUser}, ${userModel!.company}, ${userModel!.image}",
+  //       );
+  //
+  //       update(); // if inside GetX controller
+  //     } else {
+  //       print("❌ HTTP Error ${response.statusCode}: ${response.body}");
+  //     }
+  //   } on SocketException {
+  //     print("⚠️ Connection Error: Cannot reach backend ($backendUrl)");
+  //   } catch (e) {
+  //     print("⚠️ Unexpected Error: ${e.toString()}");
+  //   }
+  // }
 
   Future<void> fetchImageBase64() async {
     String? imagePath = userModel.image;
@@ -195,15 +290,19 @@ class LoginController extends MyController {
 
     if (sessionId != null && imagePath != null) {
       final url = Uri.parse(
-        "$backendUrl/user_image_base64?image_path=$imagePath&cookie=$sessionId",
+        "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.user_image_base64?image_path=$imagePath&cookie=$sessionId",
       );
 
+      // final url = Uri.parse(
+      //   "$backendUrl/user_image_base64?image_path=$imagePath&cookie=$sessionId",
+      // );
       print("url$url");
       try {
         final response = await http.get(url);
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
-          userImage = data['image_base64'];
+          var value = data["message"];
+          userImage = value['image_base64'];
           update();
         }
       } catch (e) {

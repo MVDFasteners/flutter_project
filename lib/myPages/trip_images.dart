@@ -33,18 +33,19 @@ class TripImages extends StatelessWidget {
               }
 
               if (fileName != null && compressedBytes != null) {
-                final uploadedUrl = await cameraControllerNew.uploadImage(
-                  fileName: fileName,
-                  fieldName: "image",
-                  parentDocName: controller.currentTrip.name!,
-                  parentDocType: "Employee Trip",
-                  imageBytes: compressedBytes,
-                );
+                final uploadedUrl = await cameraControllerNew
+                    .uploadImageBytesToERPNext(
+                      compressedBytes: compressedBytes,
+                      fileName: fileName,
+                      doctype: "Employee Trip",
+                      docname: controller.currentTrip.name!,
+                      fileFieldName: "image",
+                    );
 
                 if (uploadedUrl != null &&
                     controller.routeTrip.id != null &&
                     controller.currentTrip.name != null) {
-                  bool value = await controller.saveTripImages(
+                  bool value = await TripImagesController.saveTripImages(
                     parentId: controller.currentTrip.name!,
                     childId: controller.routeTrip.id!,
                     imagePath: uploadedUrl,

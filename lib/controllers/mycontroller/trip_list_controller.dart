@@ -169,6 +169,7 @@ class TripListController extends GetxController {
     }
   }
 
+
   Future<void> fetchTripList({
     String? company,
     String? fromDate,
@@ -183,51 +184,119 @@ class TripListController extends GetxController {
       print("❌ No session found. Please login first.");
       return;
     }
-    final url = Uri.parse("$backendUrl/get_trip_list");
 
-    final body = {
-      'cookie': AuthService.sessionId,
-      'company': company,
-      'from_date': fromDate,
-      'to_date': toDate,
-      'employee_id': employeeId,
-      'limit_start': limitStart,
-      'limit_page_length': limitPageLength,
-      'status': tripStatus == "All" ? null : tripStatus,
-      'name': name,
+    final url = Uri.parse(
+      "http://208.115.124.12:8000/api/method/my_api_app.api_methods.hr_modules_api.get_trip_list",
+    );
+
+    final Map<String, dynamic> body = {
+      "company": company,
+      "from_date": fromDate,
+      "to_date": toDate,
+      "employee_id": employeeId,
+      "limit_start": limitStart,
+      "limit_page_length": limitPageLength,
+      "status": tripStatus == "All" ? null : tripStatus,
+      "name": name,
     };
 
     try {
       final response = await http.post(
         url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          "Cookie": AuthService.sessionId!, // ✅ ERPNext session cookie
+        },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
-        travelLogs = [];
         final data = jsonDecode(response.body);
-        print("data $data");
-        final tripsJson = data['message'] as List<dynamic>? ?? [];
+        final tripsJson = data["message"] as List<dynamic>? ?? [];
 
         if (limitStart == 0) {
           travelLogs.clear();
         }
 
-        travelLogs.addAll(tripsJson.map((e) => Trip.fromJson(e)).toList());
+        travelLogs.addAll(
+          tripsJson.map((e) => Trip.fromJson(e)).toList(),
+        );
 
         offset += tripsJson.length;
         hasMore = tripsJson.length == limitPageLength;
-        print("TravelLogs length = ${travelLogs.length} , ${travelLogs}");
+
+        print("✅ Trip List fetched: ${travelLogs.length} trips");
       } else {
         print("❌ Error ${response.statusCode}: ${response.body}");
       }
     } catch (e) {
-      print("⚠️ Error: ${e.toString()}");
+      print("⚠️ Error fetching trip list: $e");
     }
+
     isLoading = false;
     update();
   }
+
+
+  // Future<void> fetchTripList({
+  //   String? company,
+  //   String? fromDate,
+  //   String? toDate,
+  //   String? employeeId,
+  //   int limitStart = 0,
+  //   int limitPageLength = 20,
+  //   String? name,
+  //   required String tripStatus,
+  // }) async {
+  //   if (AuthService.sessionId == null) {
+  //     print("❌ No session found. Please login first.");
+  //     return;
+  //   }
+  //   final url = Uri.parse("$backendUrl/get_trip_list");
+  //
+  //   final body = {
+  //     'cookie': AuthService.sessionId,
+  //     'company': company,
+  //     'from_date': fromDate,
+  //     'to_date': toDate,
+  //     'employee_id': employeeId,
+  //     'limit_start': limitStart,
+  //     'limit_page_length': limitPageLength,
+  //     'status': tripStatus == "All" ? null : tripStatus,
+  //     'name': name,
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       travelLogs = [];
+  //       final data = jsonDecode(response.body);
+  //       print("data $data");
+  //       final tripsJson = data['message'] as List<dynamic>? ?? [];
+  //
+  //       if (limitStart == 0) {
+  //         travelLogs.clear();
+  //       }
+  //
+  //       travelLogs.addAll(tripsJson.map((e) => Trip.fromJson(e)).toList());
+  //
+  //       offset += tripsJson.length;
+  //       hasMore = tripsJson.length == limitPageLength;
+  //       print("TravelLogs length = ${travelLogs.length} , ${travelLogs}");
+  //     } else {
+  //       print("❌ Error ${response.statusCode}: ${response.body}");
+  //     }
+  //   } catch (e) {
+  //     print("⚠️ Error: ${e.toString()}");
+  //   }
+  //   isLoading = false;
+  //   update();
+  // }
 
   void onSelectMonth(String value) {
     selectedMonth = value;
@@ -294,15 +363,15 @@ class TripListController extends GetxController {
     final String finalTime = DateFormat(
       'dd-MM-yyyy HH:mm:ss',
     ).format(DateTime.now());
-
     final DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
     final DateTime dateTime = inputFormat.parse(finalTime);
-
     final DateFormat outputFormat = DateFormat('dd MMM yy hh:mm a');
     String valueDate = outputFormat.format(dateTime);
+
     Trip tripParent = trip ?? Trip();
 
-    if (tripParent.name == null || tripParent.name == "") {
+    // Create a new Trip if not already existing
+    if (tripParent.name == null || tripParent.name!.isEmpty) {
       tripParent = Trip(
         employee: loginCtrl.userModel.employeeId,
         startDate: dateTime.toString(),
@@ -311,85 +380,252 @@ class TripListController extends GetxController {
         company: loginCtrl.userModel.company,
       );
     }
-    // else {
-    //   tripParent = Trip(
-    //     employee: loginCtrl.userModel.employeeId,
-    //     status: "Pending",
-    //     totalDistance: 0,
-    //   );
 
+    // Ensure session exists
     if (AuthService.sessionId == null) {
       print("❌ No session found. Please login first.");
       return;
     }
 
-    final url = Uri.parse("$backendUrl/save_trip_parent");
-    final Map<String, dynamic> body = {
-      'cookie': AuthService.sessionId,
-      'data': tripParent.toJson(),
-    };
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.save_trip",
+    );
+
+    // ✅ IMPORTANT: ERPNext expects only { "data": {...} }
+    final Map<String, dynamic> body = {'data': tripParent.toJson()};
 
     try {
       final response = await http.post(
         url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          'Cookie': AuthService.sessionId!, // ✅ Pass cookie in header, not body
+        },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        Map<String, String> dateFilter = {};
-
         if (data['message'] != null) {
-          print(
-            "✅ Trip Parent ${data['message']['status']}: ${data['message']['name']}",
-          );
+          final msg = data['message'];
+          print("✅ Trip Parent ${msg['status']}: ${msg['name']}");
 
-          if (data['message']['name'] != null &&
-              data['message']['status'] != "updated") {
+          // If new trip created, trigger child saving logic
+          if (msg['name'] != null && msg['status'] != "updated") {
             if (selectedYear != null &&
                 selectedMonth != null &&
                 loginCtrl.userModel.employeeId != null) {
-              dateFilter = getMonthDateRange(
+              final dateFilter = getMonthDateRange(
                 int.parse(selectedYear!),
                 selectedMonth!,
               );
               print("From: ${dateFilter['fromDate']}");
               print("To: ${dateFilter['toDate']}");
 
-              await saveTripChild(parentId: data['message']['name']);
-
-              /// to do implement fetchlist();
+              await saveTripChild(parentId: msg['name']);
             }
           }
         } else {
-          print("⚠️ Response: $data");
+          print("⚠️ Unexpected Response: $data");
         }
       } else {
         print("❌ Error ${response.statusCode}: ${response.body}");
       }
     } catch (e) {
-      print("⚠️ Error: ${e.toString()}");
+      print("⚠️ Exception: $e");
     }
+
     update();
   }
 
+  // Future<void> saveTripParent({Trip? trip}) async {
+  //   final String finalTime = DateFormat(
+  //     'dd-MM-yyyy HH:mm:ss',
+  //   ).format(DateTime.now());
+  //
+  //   final DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+  //   final DateTime dateTime = inputFormat.parse(finalTime);
+  //
+  //   final DateFormat outputFormat = DateFormat('dd MMM yy hh:mm a');
+  //   String valueDate = outputFormat.format(dateTime);
+  //   Trip tripParent = trip ?? Trip();
+  //
+  //   if (tripParent.name == null || tripParent.name == "") {
+  //     tripParent = Trip(
+  //       employee: loginCtrl.userModel.employeeId,
+  //       startDate: dateTime.toString(),
+  //       status: "Pending",
+  //       totalDistance: 0,
+  //       company: loginCtrl.userModel.company,
+  //     );
+  //   }
+  //   if (AuthService.sessionId == null) {
+  //     print("❌ No session found. Please login first.");
+  //     return;
+  //   }
+  //
+  //   final url = Uri.parse("$backendUrl/save_trip_parent");
+  //   final Map<String, dynamic> body = {
+  //     'cookie': AuthService.sessionId,
+  //     'data': tripParent.toJson(),
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //
+  //       Map<String, String> dateFilter = {};
+  //
+  //       if (data['message'] != null) {
+  //         print(
+  //           "✅ Trip Parent ${data['message']['status']}: ${data['message']['name']}",
+  //         );
+  //
+  //         if (data['message']['name'] != null &&
+  //             data['message']['status'] != "updated") {
+  //           if (selectedYear != null &&
+  //               selectedMonth != null &&
+  //               loginCtrl.userModel.employeeId != null) {
+  //             dateFilter = getMonthDateRange(
+  //               int.parse(selectedYear!),
+  //               selectedMonth!,
+  //             );
+  //             print("From: ${dateFilter['fromDate']}");
+  //             print("To: ${dateFilter['toDate']}");
+  //
+  //             await saveTripChild(parentId: data['message']['name']);
+  //
+  //             /// to do implement fetchlist();
+  //           }
+  //         }
+  //       } else {
+  //         print("⚠️ Response: $data");
+  //       }
+  //     } else {
+  //       print("❌ Error ${response.statusCode}: ${response.body}");
+  //     }
+  //   } catch (e) {
+  //     print("⚠️ Error: ${e.toString()}");
+  //   }
+  //   update();
+  // }
+
+  // Future<bool> saveTripChild({
+  //   String? parentId,
+  //   String? childId,
+  //   int? sequence,
+  // }) async {
+  //   final String finalTime = DateFormat(
+  //     'dd-MM-yyyy HH:mm:ss',
+  //   ).format(DateTime.now());
+  //   final DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+  //   final DateTime dateTime = inputFormat.parse(finalTime);
+  //   RoutePoint tripChildRoute = RoutePoint();
+  //
+  //   if (childId == null || childId == "") {
+  //
+  //
+  //     tripChildRoute = RoutePoint(
+  //       parentId: parentId,
+  //       address: address,
+  //       distanceFromPreviousKm: 0,
+  //       latitude: latitude,
+  //       longitude: longitude,
+  //       sequence: sequence ?? 1,
+  //       timestamp: dateTime.toString(),
+  //     );
+  //   } else {
+  //     tripChildRoute = RoutePoint(
+  //       id: childId,
+  //       parentId: parentId,
+  //       address: address,
+  //       distanceFromPreviousKm: 0,
+  //       latitude: latitude,
+  //       longitude: longitude,
+  //       sequence: sequence ?? 1,
+  //       timestamp: dateTime.toString(),
+  //     );
+  //   }
+  //
+  //   final url = Uri.parse("$backendUrl/save_trip_child");
+  //   final Map<String, dynamic> body = {
+  //     'cookie': AuthService.sessionId,
+  //     'data': tripChildRoute.toJson(),
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       if (data['message']['name'] != null) {
+  //         Map<String, String> dateFilter = {};
+  //         if (selectedYear != null &&
+  //             selectedMonth != null &&
+  //             loginCtrl.userModel.employeeId != null) {
+  //           dateFilter = getMonthDateRange(
+  //             int.parse(selectedYear!),
+  //             selectedMonth!,
+  //           );
+  //           print("From: ${dateFilter['fromDate']}");
+  //           print("To: ${dateFilter['toDate']}");
+  //         }
+  //         await fetchTripList(
+  //           company: loginCtrl.userModel.company,
+  //           fromDate: dateFilter['fromDate'],
+  //           toDate: dateFilter['toDate'],
+  //           employeeId: loginCtrl.userModel.employeeId,
+  //           tripStatus: tripStatus,
+  //         );
+  //         Trip? trip = travelLogs.firstWhere(
+  //           (t) => t.name == parentId,
+  //           orElse: () => Trip(),
+  //         );
+  //         updateCurrentTrip(trip);
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("⚠️ Error: ${e.toString()}");
+  //     return false;
+  //   }
+  //   update();
+  //   return false;
+  // }
+
   Future<bool> saveTripChild({
-    String? parentId,
-    String? childId,
+    required String parentId,
     int? sequence,
+    String? childId,
   }) async {
     final String finalTime = DateFormat(
       'dd-MM-yyyy HH:mm:ss',
     ).format(DateTime.now());
     final DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
     final DateTime dateTime = inputFormat.parse(finalTime);
-    RoutePoint tripChildRoute = RoutePoint();
 
-    if (childId == null || childId == "") {
+    RoutePoint tripChildRoute;
+
+    // 🧭 Ensure mandatory ERPNext parent linkage
+    const String parentType = "Employee Trip";
+
+    if (childId == null || childId.isEmpty) {
       tripChildRoute = RoutePoint(
         parentId: parentId,
+        // parentType: parentType, // ✅ Required field
         address: address,
         distanceFromPreviousKm: 0,
         latitude: latitude,
@@ -401,6 +637,8 @@ class TripListController extends GetxController {
       tripChildRoute = RoutePoint(
         id: childId,
         parentId: parentId,
+
+        // parentType: parentType,
         address: address,
         distanceFromPreviousKm: 0,
         latitude: latitude,
@@ -410,22 +648,32 @@ class TripListController extends GetxController {
       );
     }
 
-    final url = Uri.parse("$backendUrl/save_trip_child");
-    final Map<String, dynamic> body = {
-      'cookie': AuthService.sessionId,
-      'data': tripChildRoute.toJson(),
-    };
+    // ✅ Whitelisted ERPNext method URL
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.save_trip_route",
+    );
+
+    // ✅ Only send "data" — do NOT include cookie in body
+    final Map<String, dynamic> body = {'data': tripChildRoute.toJson()};
 
     try {
       final response = await http.post(
         url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          'Cookie': AuthService.sessionId!, // ✅ Pass session cookie here
+        },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data['message']['name'] != null) {
+
+        if (data['message']?['name'] != null) {
+          print(
+            "✅ Trip Child ${data['message']['status']}: ${data['message']['name']}",
+          );
+
           Map<String, String> dateFilter = {};
           if (selectedYear != null &&
               selectedMonth != null &&
@@ -437,6 +685,7 @@ class TripListController extends GetxController {
             print("From: ${dateFilter['fromDate']}");
             print("To: ${dateFilter['toDate']}");
           }
+
           await fetchTripList(
             company: loginCtrl.userModel.company,
             fromDate: dateFilter['fromDate'],
@@ -444,22 +693,26 @@ class TripListController extends GetxController {
             employeeId: loginCtrl.userModel.employeeId,
             tripStatus: tripStatus,
           );
+
           Trip? trip = travelLogs.firstWhere(
             (t) => t.name == parentId,
             orElse: () => Trip(),
           );
           updateCurrentTrip(trip);
+
           return true;
         } else {
+          print("⚠️ Unexpected response: $data");
           return false;
         }
+      } else {
+        print("❌ Server Error ${response.statusCode}: ${response.body}");
+        return false;
       }
     } catch (e) {
-      print("⚠️ Error: ${e.toString()}");
+      print("⚠️ Exception: $e");
       return false;
     }
-    update();
-    return false;
   }
 
   Future<void> refreshItems() async {

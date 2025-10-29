@@ -287,7 +287,7 @@ class _TripListScreenState extends State<TripListScreen>
     required String status,
   }) {
     return MyContainer(
-      height: 155,
+      height: 165,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -359,7 +359,7 @@ class _TripListScreenState extends State<TripListScreen>
         return monthMap.keys.map((month) {
           return PopupMenuItem<String>(
             value: month,
-            height: 32,
+            height: 36,
             child: MyText.bodySmall(
               month,
               color: Theme.of(context).colorScheme.onSurface,
@@ -446,6 +446,7 @@ class _TripListScreenState extends State<TripListScreen>
     Color color,
   ) {
     return MyCard(
+      color: color,
       shadow: MyShadow(elevation: 1),
       paddingAll: 8,
       margin: MySpacing.right(5),
@@ -453,18 +454,29 @@ class _TripListScreenState extends State<TripListScreen>
       // width: 300,
       child: Row(
         children: [
-          MyContainer.none(
-            borderRadiusAll: AppStyle.buttonRadius.medium,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: Icon(icon, size: 30, color: color),
-            // Icon(Icons.absent, size: 70),
-          ),
+          Icon(icon, size: 30, color: Colors.white),
+          // MyContainer.none(
+          //   borderRadiusAll: AppStyle.buttonRadius.medium,
+          //   clipBehavior: Clip.antiAliasWithSaveLayer,
+          //   child: Icon(icon, size: 30, color: color),
+          //   // Icon(Icons.absent, size: 70),
+          // ),
           MySpacing.width(16),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              MyText.bodyMedium(title, muted: true, fontSize: 20),
-              MyText.bodyMedium(value, fontWeight: 700, fontSize: 20),
+              MyText.bodyMedium(
+                title,
+                muted: true,
+                fontSize: 20,
+                color: Colors.white,
+              ),
+              MyText.bodyMedium(
+                value,
+                fontWeight: 700,
+                fontSize: 20,
+                color: Colors.white,
+              ),
             ],
           ),
         ],

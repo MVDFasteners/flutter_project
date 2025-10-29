@@ -114,86 +114,172 @@ class TripImagesController extends GetxController {
       print("❌ No session found. Please login first.");
       return;
     }
-    final url = Uri.parse("$backendUrl/get_trip_images");
-    final body = {
-      'cookie': AuthService.sessionId,
-      'parent_id': currentTrip.name,
-      'child_id': childId,
+
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_trip_images",
+    );
+
+    final Map<String, dynamic> body = {
+      "parent_id": currentTrip.name,
+      if (childId != null) "child_id": childId,
     };
 
     try {
       final response = await http.post(
         url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          "Cookie": AuthService.sessionId!, // ✅ session-based auth
+        },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
         tripImageList = [];
         final data = jsonDecode(response.body);
-        print("data $data");
         final tripsJson = data['message'] as List<dynamic>? ?? [];
         tripImageList.addAll(
           tripsJson.map((e) => TripImage.fromJson(e)).toList(),
         );
-        print(
-          "Travel Images length = ${tripImageList.length} , ${tripImageList}",
-        );
+        print("✅ Trip images fetched: ${tripImageList.length}");
       } else {
-        print("❌ Error ${response.statusCode}: ${response.body}");
+        print("❌ ERPNext error: ${response.statusCode} ${response.body}");
       }
     } catch (e) {
-      print("⚠️ Error: ${e.toString()}");
+      print("⚠️ Error fetching trip images: $e");
     }
+
     update();
   }
 
-  Future<bool> saveTripImages({
+  // Future<void> fetchTripImages({String? childId}) async {
+  //   if (AuthService.sessionId == null) {
+  //     print("❌ No session found. Please login first.");
+  //     return;
+  //   }
+  //   final url = Uri.parse("$backendUrl/get_trip_images");
+  //   final body = {
+  //     'cookie': AuthService.sessionId,
+  //     'parent_id': currentTrip.name,
+  //     'child_id': childId,
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       tripImageList = [];
+  //       final data = jsonDecode(response.body);
+  //       print("data $data");
+  //       final tripsJson = data['message'] as List<dynamic>? ?? [];
+  //       tripImageList.addAll(
+  //         tripsJson.map((e) => TripImage.fromJson(e)).toList(),
+  //       );
+  //       print(
+  //         "Travel Images length = ${tripImageList.length} , ${tripImageList}",
+  //       );
+  //     } else {
+  //       print("❌ Error ${response.statusCode}: ${response.body}");
+  //     }
+  //   } catch (e) {
+  //     print("⚠️ Error: ${e.toString()}");
+  //   }
+  //   update();
+  // }
+
+  static Future<bool> saveTripImages({
     required String parentId,
     required String childId,
     String? description,
     required String imagePath,
   }) async {
-    TripImage tripImage = TripImage();
+    final String backendUrl =
+        "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.save_trip_image";
 
-    tripImage = TripImage(
+    final tripImage = TripImage(
       parentId: parentId,
-      // "sjh4bv2ee1",
       childId: childId,
-      // "v2jfhsmbaj",
       description: description,
-      // "naosdna",
       image: imagePath,
-      // "/files/1000047124.jpg",
-      id: null,
-      // "43cqae8l89",
     );
-
-    final url = Uri.parse("$backendUrl/save_trip_image");
-    final Map<String, dynamic> body = {
-      'cookie': AuthService.sessionId,
-      'data': tripImage.toJson(),
-    };
 
     try {
       final response = await http.post(
-        url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-        body: jsonEncode(body),
+        Uri.parse(backendUrl),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          'Cookie': AuthService.sessionId!, // ✅ Use session cookie for auth
+        },
+        body: jsonEncode({'data': tripImage.toJson()}),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data['message']['name'] != null) {
+        print("✅ ERPNext Response: $data");
+
+        if (data['message'] != null && data['message']['name'] != null) {
           return true;
-        } else {
-          return false;
         }
+      } else {
+        print("❌ ERPNext error: ${response.statusCode} ${response.body}");
       }
     } catch (e) {
-      print("⚠️ Error: ${e.toString()}");
-      return false;
+      print("⚠️ Error while saving trip image: $e");
     }
+
     return false;
   }
+
+  // Future<bool> saveTripImages({
+  //   required String parentId,
+  //   required String childId,
+  //   String? description,
+  //   required String imagePath,
+  // }) async {
+  //   TripImage tripImage = TripImage();
+  //
+  //   tripImage = TripImage(
+  //     parentId: parentId,
+  //     // "sjh4bv2ee1",
+  //     childId: childId,
+  //     // "v2jfhsmbaj",
+  //     description: description,
+  //     // "naosdna",
+  //     image: imagePath,
+  //     // "/files/1000047124.jpg",
+  //     id: null,
+  //     // "43cqae8l89",
+  //   );
+  //
+  //   final url = Uri.parse("$backendUrl/save_trip_image");
+  //   final Map<String, dynamic> body = {
+  //     'cookie': AuthService.sessionId,
+  //     'data': tripImage.toJson(),
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       if (data['message']['name'] != null) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("⚠️ Error: ${e.toString()}");
+  //     return false;
+  //   }
+  //   return false;
+  // }
 }

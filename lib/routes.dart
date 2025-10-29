@@ -404,12 +404,13 @@ List<GetPage> getPageRoute() {
 
   return routes
       .map(
-        (e) => GetPage(
+        (e) =>
+        GetPage(
           name: e.name,
           page: e.page,
           middlewares: e.middlewares,
           transition: Transition.noTransition,
         ),
-      )
+  )
       .toList();
 }

@@ -56,21 +56,24 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    final msg = json['message'] ?? {};
+    // final msg = json['user_id'] ?? {};
 
+    final value = json["user_id"];
+    print(value);
     return UserModel(
-      userId: msg['user_id'] ?? '',
-      fullName: msg['full_name'] ?? '',
-      image: msg['image'] ?? '',
-      department: msg['department'] ?? '',
-      company: msg['company'] ?? '',
-      employeeId: msg['employee_id'] ?? '',
+      userId: json['user_id'] ?? '',
+      fullName: json['full_name'] ?? '',
+      image: json['image'] ?? '',
+      department: json['department'] ?? '',
+      company: json['company'] ?? '',
+      employeeId: json['employee_id'] ?? '',
 
-      stockUser: int.tryParse(msg['stock_user']?.toString() ?? '0'),
-      accountUser: int.tryParse(msg['accounts_user']?.toString() ?? '0'),
-      attendanceUser: int.tryParse(msg['hr_user']?.toString() ?? '0'),
-      dashboardUser: int.tryParse(msg['dashbord_user']?.toString() ?? '0'),
+      stockUser: int.tryParse(json['stock_user']?.toString() ?? '0'),
+      accountUser: int.tryParse(json['accounts_user']?.toString() ?? '0'),
+      attendanceUser: int.tryParse(json['hr_user']?.toString() ?? '0'),
+      dashboardUser: int.tryParse(json['dashbord_user']?.toString() ?? '0'),
     );
+
   }
 
   // Optional: Convert User to JSON (if needed)

@@ -49,40 +49,83 @@ class PlaceListController extends GetxController {
     }
   }
 
-  Future<void> fetchRoutesList({String? parentId}) async {
+  Future<void> fetchRoutesList({required String parentId}) async {
     if (AuthService.sessionId == null) {
       print("❌ No session found. Please login first.");
       return;
     }
-    final url = Uri.parse("$backendUrl/get_route_list_child");
-    final body = {'cookie': AuthService.sessionId, 'parent_id': parentId};
+
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_travel_log_routes",
+    );
+
+    final Map<String, dynamic> body = {"parent_id": parentId};
 
     try {
       final response = await http.post(
         url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          "Cookie": AuthService.sessionId!, // ✅ use ERPNext session
+        },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
         tripRouteList = [];
         final data = jsonDecode(response.body);
-        print("data $data");
+
         final tripsJson = data['message'] as List<dynamic>? ?? [];
         tripRouteList.addAll(
           tripsJson.map((e) => RoutePoint.fromJson(e)).toList(),
         );
-        print(
-          "Travel Routes length = ${tripRouteList.length} , ${tripRouteList}",
-        );
+
+        print("✅ Travel Routes fetched: ${tripRouteList.length}");
       } else {
         print("❌ Error ${response.statusCode}: ${response.body}");
       }
     } catch (e) {
-      print("⚠️ Error: ${e.toString()}");
+      print("⚠️ Error fetching travel routes: $e");
     }
+
     update();
   }
+
+  // Future<void> fetchRoutesList({String? parentId}) async {
+  //   if (AuthService.sessionId == null) {
+  //     print("❌ No session found. Please login first.");
+  //     return;
+  //   }
+  //
+  //   final url = Uri.parse("$backendUrl/get_route_list_child");
+  //   final body = {'cookie': AuthService.sessionId, 'parent_id': parentId};
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       tripRouteList = [];
+  //       final data = jsonDecode(response.body);
+  //       print("data $data");
+  //       final tripsJson = data['message'] as List<dynamic>? ?? [];
+  //       tripRouteList.addAll(
+  //         tripsJson.map((e) => RoutePoint.fromJson(e)).toList(),
+  //       );
+  //       print(
+  //         "Travel Routes length = ${tripRouteList.length} , ${tripRouteList}",
+  //       );
+  //     } else {
+  //       print("❌ Error ${response.statusCode}: ${response.body}");
+  //     }
+  //   } catch (e) {
+  //     print("⚠️ Error: ${e.toString()}");
+  //   }
+  //   update();
+  // }
 
   Future<void> endTrip() async {
     double totalDistance = tripRouteList.fold(
@@ -111,7 +154,6 @@ class PlaceListController extends GetxController {
     final DateFormat inputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
     final DateTime dateTime = inputFormat.parse(finalTime);
     RoutePoint tripChildRoute = RoutePoint();
-
     if (childId == null || childId == "") {
       tripChildRoute = RoutePoint(
         parentId: parentId ?? currentTrip.name,
@@ -132,24 +174,26 @@ class PlaceListController extends GetxController {
         timestamp: dateTime.toString(),
       );
     }
-
-    final url = Uri.parse("$backendUrl/save_trip_child");
-    final Map<String, dynamic> body = {
-      'cookie': AuthService.sessionId,
-      'data': tripChildRoute.toJson(),
-    };
-
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.save_trip_route",
+    );
+    final Map<String, dynamic> body = {'data': tripChildRoute.toJson()};
     try {
       final response = await http.post(
         url,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          'Cookie': AuthService.sessionId!, // ✅ Pass session cookie here
+        },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['message']['name'] != null) {
-          await fetchRoutesList(parentId: currentTrip.name);
+          if (currentTrip.name != null) {
+            await fetchRoutesList(parentId: currentTrip.name!);
+          }
           isFetchLoading = false;
           update();
           return true;
