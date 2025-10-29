@@ -59,6 +59,14 @@
     <string>This app needs access to your location at all times to provide accurate location data.</string>
 
 
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires camera access to capture your photo.</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app requires microphone access for recording audio.</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photo library to select images.</string>
 
 </dict>
 </plist>

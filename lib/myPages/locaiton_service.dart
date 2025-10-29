@@ -26,32 +26,25 @@ class LocationService {
   }
 
   Future<bool> _handlePermission() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      print("Location services are disabled.");
-      await Geolocator.openLocationSettings();
-      return false;
-    }
-    LocationPermission permission = await Geolocator.checkPermission();
+    LocationPermission permission;
+
+    // Check current permission
+    permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
-      print("Requesting location permission...");
+      // Request it
       permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.denied) {
-      print("Location permission denied.");
-      return false;
+      if (permission == LocationPermission.denied) {
+        return false; // user denied
+      }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      print(
-        "Location permission permanently denied. Ask user to enable manually.",
-      );
+      // User permanently denied (must go to Settings)
       return false;
     }
 
-    print("Permission granted: $permission");
+    // Permission granted
     return true;
   }
 

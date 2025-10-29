@@ -15,13 +15,14 @@ import 'package:flatten/controllers/mycontroller/attendance_controller.dart';
 class CameraPageNew extends StatefulWidget {
   const CameraPageNew({super.key});
 
+
   @override
   State<CameraPageNew> createState() => _CameraPageNewState();
 }
 
 class _CameraPageNewState extends State<CameraPageNew>
     with SingleTickerProviderStateMixin, UIMixin {
-  late CameraController _camController;
+  CameraController? _camController; // ✅ make nullable
   late AttendanceController attendanceController;
 
   bool _isCameraInitialized = false;
@@ -36,15 +37,20 @@ class _CameraPageNewState extends State<CameraPageNew>
 
   @override
   void dispose() {
-    _camController.dispose();
+    _camController?.dispose(); // ✅ dispose only if not null
     super.dispose();
   }
 
   Future<void> _initializeCamera() async {
     try {
       final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        print("❌ No cameras available on this device (simulator).");
+        return;
+      }
+
       final frontCamera = cameras.firstWhere(
-        (cam) => cam.lensDirection == CameraLensDirection.front,
+            (cam) => cam.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
 
@@ -53,7 +59,7 @@ class _CameraPageNewState extends State<CameraPageNew>
         ResolutionPreset.low,
         enableAudio: false,
       );
-      await _camController.initialize();
+      await _camController!.initialize();
       if (mounted) {
         setState(() => _isCameraInitialized = true);
       }
@@ -63,13 +69,14 @@ class _CameraPageNewState extends State<CameraPageNew>
   }
 
   Future<Map<String, dynamic>?> _capturePhoto(BuildContext context) async {
-    if (!_camController.value.isInitialized) {
+    if (!(_camController?.value.isInitialized ?? false)) {
       toastMessage(message: "Camera is not initialized");
       setState(() => _isloading = false);
       return null;
     }
+
     try {
-      final XFile imageFile = await _camController.takePicture();
+      final XFile imageFile = await _camController!.takePicture();
       File capturedImage = File(imageFile.path);
 
       final String fileName = capturedImage.path.split('/').last;
@@ -82,10 +89,10 @@ class _CameraPageNewState extends State<CameraPageNew>
         quality: 50,
       );
 
-      Map<String, dynamic> values = {};
-      values['fileName'] = fileName;
-      values['compressedBytes'] = compressedBytes;
-      return values;
+      return {
+        'fileName': fileName,
+        'compressedBytes': compressedBytes,
+      };
     } catch (e) {
       setState(() => _isloading = false);
       print("Error capturing image: $e");
@@ -99,15 +106,22 @@ class _CameraPageNewState extends State<CameraPageNew>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.primaryColor,
-        title: Text("Face Verification"),
+        title: const Text("Face Verification"),
       ),
       body: Stack(
         children: [
-          if (_isCameraInitialized)
+          if (_isCameraInitialized && _camController != null)
             Positioned.fill(
               child: Transform.scale(
                 scaleX: -1,
-                child: CameraPreview(_camController),
+                child: CameraPreview(_camController!),
+              ),
+            )
+          else
+            const Center(
+              child: Text(
+                "Camera not available",
+                style: TextStyle(color: Colors.white),
               ),
             ),
           Positioned(
@@ -116,39 +130,26 @@ class _CameraPageNewState extends State<CameraPageNew>
             right: 0,
             child: Center(
               child: _isloading
-                  ? CircularProgressIndicator(color: Colors.white)
+                  ? const CircularProgressIndicator(color: Colors.white)
                   : FloatingActionButton(
-                      backgroundColor: AppTheme.primaryColor,
-                      onPressed: () async {
-                        setState(() => _isloading = true);
+                backgroundColor: AppTheme.primaryColor,
+                onPressed: () async {
+                  setState(() => _isloading = true);
 
-                        Uint8List? compressedBytes;
-                        String? fileUrl;
+                  final value = await _capturePhoto(context);
 
-                        Map<String, dynamic>? value = await _capturePhoto(
-                          context,
-                        );
+                  if (value != null) {
+                    await attendanceController.saveLoginEntryDirect(
+                      fileName: value['fileName'],
+                      compressedBytes: value['compressedBytes'],
+                    );
+                  }
 
-                        
-                        if (value != null) {
-                          compressedBytes = value['compressedBytes'];
-                          fileUrl = value['fileName'];
-
-                          if (fileUrl != null && compressedBytes != null) {
-                            await attendanceController.saveLoginEntryDirect(
-                              fileName: fileUrl,
-                              compressedBytes: compressedBytes,
-                            );
-                          }
-                          setState(() => _isloading = false);
-                          Navigator.pop(context);
-                        } else {
-                          setState(() => _isloading = false);
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: const Icon(Icons.camera),
-                    ),
+                  setState(() => _isloading = false);
+                  Navigator.pop(context);
+                },
+                child: const Icon(Icons.camera),
+              ),
             ),
           ),
         ],

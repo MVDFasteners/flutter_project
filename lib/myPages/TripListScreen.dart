@@ -474,7 +474,7 @@ class _TripListScreenState extends State<TripListScreen>
               MyText.bodyMedium(
                 value,
                 fontWeight: 700,
-                fontSize: 18,
+                fontSize: 16,
                 color: Colors.white,
               ),
             ],
