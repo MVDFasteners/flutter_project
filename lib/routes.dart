@@ -94,7 +94,7 @@ List<GetPage> getPageRoute() {
     GetPage(
       name: '/',
       page: () => CompanyHomePage(),
-      // middlewares: [AuthMiddleware()],
+      middlewares: [AuthMiddleware()],
     ),
 
     GetPage(

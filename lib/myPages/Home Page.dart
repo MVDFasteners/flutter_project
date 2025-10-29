@@ -1,7 +1,4 @@
 import 'package:flatten/controllers/auth/login_controller.dart';
-import 'package:flatten/controllers/mycontroller/attendance_controller.dart';
-import 'package:flatten/controllers/mycontroller/trip_list_controller.dart';
-import 'package:flatten/models/trip_list.dart';
 import 'package:flatten/myPages/TripListScreen.dart';
 import 'package:flatten/views/dashboard/attendance.dart';
 import 'package:flutter/material.dart';
@@ -38,12 +35,12 @@ class _CompanyHomePageState extends State<CompanyHomePage>
   final List<Map<String, dynamic>> buttonData = [
     {
       'label': 'Attendance',
-      'imageAsset': 'assets/images/logo/ethereum-eth-logo.png',
+      'imageAsset': 'assets/images/logo/attendance.jpg',
       'onTap': 'attendance',
     },
     {
       'label': 'Trip List',
-      'imageAsset': 'assets/images/logo/ethereum-eth-logo.png',
+      'imageAsset': 'assets/images/logo/location.jpg',
       'onTap': 'taskList',
     },
   ];
@@ -288,7 +285,7 @@ class _CompanyHomePageState extends State<CompanyHomePage>
                             tween: Tween(begin: 0.0, end: 1.0),
                             builder: (context, value, child) => Transform.scale(
                               scale: value,
-                              child: Container(
+                              child: SizedBox(
                                 width: logoSize,
                                 height: logoSize,
                                 child: ClipRRect(
