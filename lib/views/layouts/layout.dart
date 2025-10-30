@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/auth/login_controller.dart';
 import 'package:flatten/controllers/layouts/layout_controller.dart';
 import 'package:flatten/helpers/theme/admin_theme.dart';
@@ -333,7 +334,11 @@ class Layout extends StatelessWidget {
                         color: contentTheme.onBackground,
                       ),
                       MySpacing.width(8),
-                      MyText.labelMedium("Settings", fontWeight: 600),
+                      InkWell(
+                         onTap: () {
+                           toastMessage(message: "working");
+                         },
+                          child: MyText.labelMedium("Settings", fontWeight: 600)),
                     ],
                   ),
                 ),
