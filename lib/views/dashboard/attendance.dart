@@ -186,8 +186,8 @@ class _AttendanceState extends State<Attendance>
                               : "0 hrs 0 min";
 
                           return InkWell(
-                            onTap: () {
-                              controller.updateEmployeeLogin(
+                            onTap: () async{
+                             await controller.updateEmployeeLogin(
                                 controller.employeeLoginList[index],
                               );
                               Get.toNamed('/login_details');

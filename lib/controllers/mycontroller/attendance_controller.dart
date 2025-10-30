@@ -143,15 +143,15 @@ class AttendanceController extends MyController {
     return {'fromDate': _formatDate(fromDate), 'toDate': _formatDate(toDate)};
   }
 
-  void updateEmployeeLogin(EmployeeLogin login) {
+  Future<void> updateEmployeeLogin(EmployeeLogin login) async {
     employeeLogin = login;
     if (login.inPhoto != null) {
-      fetchImageBase64(login.inPhoto!, inPhoto: true);
+      await fetchImageBase64(login.inPhoto!, inPhoto: true);
     } else {
       inImage = null;
     }
     if (login.outPhoto != null) {
-      fetchImageBase64(login.outPhoto!, inPhoto: false);
+      await fetchImageBase64(login.outPhoto!, inPhoto: false);
     } else {
       outImage = null;
     }

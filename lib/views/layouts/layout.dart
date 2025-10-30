@@ -13,6 +13,7 @@ import 'package:flatten/helpers/widgets/my_responsiv.dart';
 import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/images.dart';
+import 'package:flatten/views/auth/login.dart';
 import 'package:flatten/views/layouts/left_bar.dart';
 import 'package:flatten/views/layouts/right_bar.dart';
 import 'package:flatten/views/layouts/top_bar.dart';
@@ -53,7 +54,7 @@ class Layout extends StatelessWidget {
           init: controller,
           builder: (controller) {
             if (screenMT.isMobile || screenMT.isTablet) {
-              return mobileScreen(scrollNeed: scrollNeed);
+              return mobileScreen(scrollNeed: scrollNeed, context: context);
             } else {
               return largeScreen();
             }
@@ -63,7 +64,10 @@ class Layout extends StatelessWidget {
     );
   }
 
-  Widget mobileScreen({bool? scrollNeed = true}) {
+  Widget mobileScreen({
+    bool? scrollNeed = true,
+    required BuildContext context,
+  }) {
     return Scaffold(
       floatingActionButton: floatingAction,
       key: controller.scaffoldKey,
@@ -131,7 +135,7 @@ class Layout extends StatelessWidget {
                 // ),
               ),
             ),
-            menuBuilder: (_) => buildAccountMenu(),
+            menuBuilder: (_) => buildAccountMenu(context),
           ),
           MySpacing.width(20),
         ],
@@ -287,7 +291,7 @@ class Layout extends StatelessWidget {
     );
   }
 
-  Widget buildAccountMenu() {
+  Widget buildAccountMenu(context) {
     return MyContainer.bordered(
       paddingAll: 0,
       width: 150,
@@ -363,10 +367,19 @@ class Layout extends StatelessWidget {
                     color: contentTheme.danger,
                   ),
                   MySpacing.width(8),
-                  MyText.labelMedium(
-                    "Log out",
-                    fontWeight: 600,
-                    color: contentTheme.danger,
+                  InkWell(
+                    onTap: () async {
+                      await loginController.userLogOut();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
+                    child: MyText.labelMedium(
+                      "Log out",
+                      fontWeight: 600,
+                      color: contentTheme.danger,
+                    ),
                   ),
                 ],
               ),

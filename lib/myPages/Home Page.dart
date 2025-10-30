@@ -1,6 +1,7 @@
 import 'package:flatten/controllers/auth/login_controller.dart';
 import 'package:flatten/myPages/TripListScreen.dart';
 import 'package:flatten/views/dashboard/attendance.dart';
+import 'package:flatten/views/layouts/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
@@ -23,6 +24,7 @@ class CompanyHomePage extends StatefulWidget {
 class _CompanyHomePageState extends State<CompanyHomePage>
     with SingleTickerProviderStateMixin {
   late LoginController controller;
+
   // late AttendanceController attendanceController;
   // late TripListController tripListController;
 
@@ -99,6 +101,7 @@ class _CompanyHomePageState extends State<CompanyHomePage>
     return Container(
       width: width,
       height: height,
+
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
@@ -129,16 +132,12 @@ class _CompanyHomePageState extends State<CompanyHomePage>
     final double logoSize = screenWidth * 0.45;
     final double cardSize = screenWidth * 0.36;
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Stack(
+    return Layout(
+      scrollNeed: false,
+      child: Expanded(
+        child: Stack(
           children: [
             Container(color: lighten(baseTeal, 0.99)),
-            // lightest teal background
-
-            // Add MANY circles for rich 3D layering
-            // Top left (large)
             Positioned(
               top: -screenWidth * 0.28,
               left: -screenWidth * 0.21,
