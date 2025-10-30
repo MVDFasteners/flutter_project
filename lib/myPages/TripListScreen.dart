@@ -40,6 +40,7 @@ class _TripListScreenState extends State<TripListScreen>
   @override
   Widget build(BuildContext context) {
     return Layout(
+
       leadingWidget: IconButton(
         onPressed: () {
           Navigator.pop(context);

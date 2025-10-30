@@ -52,6 +52,7 @@ class _AttendanceState extends State<Attendance>
   @override
   Widget build(BuildContext context) {
     return Layout(
+
       leadingWidget: IconButton(
         onPressed: () {
           Navigator.pop(context);
@@ -105,57 +106,51 @@ class _AttendanceState extends State<Attendance>
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            MyText.titleMedium(
-                              "ATTENDANCE".tr(),
-                              fontSize: 18,
-                              fontWeight: 600,
-                            ),
-                            Spacer(),
-                            _popUpMenuBuilderForYearlySummary(controller),
-                            MySpacing.width(flexSpacing),
-                            _popUpMenuBuilderForMonthlySummary(controller),
-                          ],
-                        ),
-                        SizedBox(height: 4),
-                        Column(
-                          // Row(children: [..._presentAbsent()]),
-                          // Row(children: [..._halfPermission()]),
-                          children: [
-                            Row(children: [..._presentAbsent()]),
-                            SizedBox(height: 6),
-                            Row(children: [..._halfPermission()]),
-                            // if (Responsive.isMobile(context))
-                            //   Row(children: [..._presentAbsent()])
-                            // else
-                            //   _responsiveTitleHead(),
-                            // MySpacing.height(flexSpacing),
-                            // if (Responsive.isMobile(context))
-                            //   Row(children: [..._halfPermission()]),
-                          ],
-                        ),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          MyText.titleMedium(
+                            "ATTENDANCE".tr(),
+                            fontSize: 18,
+                            fontWeight: 600,
+                          ),
+                          Spacer(),
+                          _popUpMenuBuilderForYearlySummary(controller),
+                          MySpacing.width(flexSpacing),
+                          _popUpMenuBuilderForMonthlySummary(controller),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                      Column(
+                        // Row(children: [..._presentAbsent()]),
+                        // Row(children: [..._halfPermission()]),
+                        children: [
+                          Row(children: [..._presentAbsent()]),
+                          SizedBox(height: 6),
+                          Row(children: [..._halfPermission()]),
+                          // if (Responsive.isMobile(context))
+                          //   Row(children: [..._presentAbsent()])
+                          // else
+                          //   _responsiveTitleHead(),
+                          // MySpacing.height(flexSpacing),
+                          // if (Responsive.isMobile(context))
+                          //   Row(children: [..._halfPermission()]),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
               Expanded(
                 flex: 3,
                 child: controller.employeeLoginList.isEmpty
-                    ? Container(
-                        // color: Colors.blue,
-                        child: Center(
-                          child: Text(
-                            "No Records Found",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      )
+                    ? Center(
+                      child: Text(
+                        "No Records Found",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    )
                     : ListView.builder(
                         padding: MySpacing.xy(8, 0),
                         shrinkWrap: true,
@@ -186,8 +181,8 @@ class _AttendanceState extends State<Attendance>
                               : "0 hrs 0 min";
 
                           return InkWell(
-                            onTap: () async{
-                             await controller.updateEmployeeLogin(
+                            onTap: () async {
+                              await controller.updateEmployeeLogin(
                                 controller.employeeLoginList[index],
                               );
                               Get.toNamed('/login_details');
