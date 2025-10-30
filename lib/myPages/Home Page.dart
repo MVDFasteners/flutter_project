@@ -365,7 +365,7 @@ class _CompanyHomePageState extends State<CompanyHomePage>
           duration: const Duration(milliseconds: 80),
           child: Container(
             width: size,
-            height: size,
+            height: size + 23,
             margin: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               gradient: const LinearGradient(

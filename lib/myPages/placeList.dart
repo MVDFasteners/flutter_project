@@ -97,8 +97,14 @@ class PlaceList extends StatelessWidget {
                             stop.address ?? "",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(
-                            '${stop.distanceFromPreviousKm} • ${value}',
+                          subtitle: Row(
+                            children: [
+                              Text("${stop.distanceFromPreviousKm} km",style: TextStyle(color: Colors.red) ),
+                              Spacer(),
+                              Text(
+                                '${value}'
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -128,8 +134,8 @@ class PlaceList extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          ": ${controller.currentTrip.totalDistance}",
-          style: TextStyle(fontSize: 30),
+          ": ${controller.currentTrip.totalDistance} km",
+          style: TextStyle(fontSize: 30, color: Colors.red),
         ),
       ),
     ];

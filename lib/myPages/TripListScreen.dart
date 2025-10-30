@@ -323,7 +323,7 @@ class _TripListScreenState extends State<TripListScreen>
           MyText.titleLarge(endDate, fontWeight: 700),
           Row(
             children: [
-              MyText.bodyMedium(distanceTraveled, fontWeight: 600),
+              MyText.bodyMedium(distanceTraveled, fontWeight: 600, color: Colors.red,),
               Spacer(),
               MyContainer(
                 paddingAll: 8,
