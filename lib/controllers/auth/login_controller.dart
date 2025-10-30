@@ -7,6 +7,7 @@ import 'package:flatten/controllers/my_controller.dart';
 import 'package:flatten/helpers/services/auth_service.dart';
 import 'package:flatten/helpers/widgets/my_form_validator.dart';
 import 'package:flatten/helpers/widgets/my_validators.dart';
+import 'package:flatten/views/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -52,7 +53,7 @@ class LoginController extends MyController {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String? userId = pref.getString("email");
     if (userId != null) {
-      fetchUserByEmail(userId);
+      await fetchUserByValue(userId);
     }
   }
 
@@ -123,7 +124,7 @@ class LoginController extends MyController {
         AuthService.sessionId = session;
 
         print("✅ Session stored: $session");
-        await fetchUserByEmail(email);
+        await fetchUserByValue(email);
         loading = false;
         update();
         goToDashboard();
@@ -169,7 +170,7 @@ class LoginController extends MyController {
           AuthService.sessionId = sessionId;
           toastMessage(message: "Login  Success");
           print("✅ Session stored: $sessionId");
-          await fetchUserByEmail(email);
+          await fetchUserByValue(email);
           loading = false;
           update();
           goToDashboard();
@@ -188,14 +189,14 @@ class LoginController extends MyController {
     return null;
   }
 
-  Future<void> fetchUserByEmail(String email) async {
+  Future<void> fetchUserByValue(String value) async {
     if (AuthService.sessionId == null) {
       print("❌ No session found. Please login first.");
       return;
     }
 
     final url = Uri.parse(
-      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_user_by_email?email=$email",
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_user_by_email_or_mobile?value=$value",
     );
 
     try {
@@ -210,12 +211,15 @@ class LoginController extends MyController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        if (data.containsKey('error')) {
-          print("❌ Error: ${data['error']}");
+        // Frappe APIs wrap return values inside 'message' by default
+        final message = data['message'] ?? data;
+
+        if (message is Map && message.containsKey('error')) {
+          print("❌ Error: ${message['error']}");
           return;
         }
 
-        userModel = UserModel.fromJson(data['message'] ?? data);
+        userModel = UserModel.fromJson(message);
         await fetchImageBase64();
 
         print(
@@ -230,6 +234,33 @@ class LoginController extends MyController {
       print("⚠️ Connection Error: Cannot reach backend ($baseUrl)");
     } catch (e) {
       print("⚠️ Unexpected Error: ${e.toString()}");
+    }
+  }
+
+  Future<void> userLogOut() async {
+    if (AuthService.sessionId == null) {
+      print("❌ No session found. Please login first.");
+      return;
+    }
+
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.logout_user",
+    );
+
+    final response = await http.get(
+      url,
+      headers: {'Cookie': AuthService.sessionId!},
+    );
+
+    if (response.statusCode == 200) {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      await preferences.remove("session_id");
+      response.body;
+      print("✅ Logout successful");
+
+      AuthService.sessionId = null;
+    } else {
+      print("❌ Logout failed: ${response.body}");
     }
   }
 
