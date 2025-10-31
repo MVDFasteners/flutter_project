@@ -142,6 +142,7 @@ class _AttendanceState extends State<Attendance>
                 ),
               ),
               Expanded(
+
                 flex: 3,
                 child: controller.employeeLoginList.isEmpty
                     ? Center(
