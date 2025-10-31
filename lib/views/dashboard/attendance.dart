@@ -86,12 +86,16 @@ class _AttendanceState extends State<Attendance>
               //   );
               // }
 
-              File? value = await Navigator.push(
+              bool? value = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CameraPageNew()),
               );
-
               print(value);
+              if (value ?? false) {
+                showCustomToast("Login Successful!", context);
+              } else {
+                showCustomToast("Not Punched!", context);
+              }
             },
           );
         },
@@ -142,7 +146,6 @@ class _AttendanceState extends State<Attendance>
                 ),
               ),
               Expanded(
-
                 flex: 3,
                 child: controller.employeeLoginList.isEmpty
                     ? Center(

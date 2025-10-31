@@ -15,7 +15,6 @@ import 'package:flatten/controllers/mycontroller/attendance_controller.dart';
 class CameraPageNew extends StatefulWidget {
   const CameraPageNew({super.key});
 
-
   @override
   State<CameraPageNew> createState() => _CameraPageNewState();
 }
@@ -50,7 +49,7 @@ class _CameraPageNewState extends State<CameraPageNew>
       }
 
       final frontCamera = cameras.firstWhere(
-            (cam) => cam.lensDirection == CameraLensDirection.front,
+        (cam) => cam.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
 
@@ -89,10 +88,7 @@ class _CameraPageNewState extends State<CameraPageNew>
         quality: 50,
       );
 
-      return {
-        'fileName': fileName,
-        'compressedBytes': compressedBytes,
-      };
+      return {'fileName': fileName, 'compressedBytes': compressedBytes};
     } catch (e) {
       setState(() => _isloading = false);
       print("Error capturing image: $e");
@@ -132,24 +128,26 @@ class _CameraPageNewState extends State<CameraPageNew>
               child: _isloading
                   ? const CircularProgressIndicator(color: Colors.white)
                   : FloatingActionButton(
-                backgroundColor: AppTheme.primaryColor,
-                onPressed: () async {
-                  setState(() => _isloading = true);
+                      backgroundColor: AppTheme.primaryColor,
+                      onPressed: () async {
+                        setState(() => _isloading = true);
+                        bool? created;
 
-                  final value = await _capturePhoto(context);
+                        final value = await _capturePhoto(context);
 
-                  if (value != null) {
-                    await attendanceController.saveLoginEntryDirect(
-                      fileName: value['fileName'],
-                      compressedBytes: value['compressedBytes'],
-                    );
-                  }
+                        if (value != null) {
+                          created = await attendanceController
+                              .saveLoginEntryDirect(
+                                fileName: value['fileName'],
+                                compressedBytes: value['compressedBytes'],
+                              );
+                        }
 
-                  setState(() => _isloading = false);
-                  Navigator.pop(context);
-                },
-                child: const Icon(Icons.camera),
-              ),
+                        setState(() => _isloading = false);
+                        Navigator.pop(context, created);
+                      },
+                      child: const Icon(Icons.camera),
+                    ),
             ),
           ),
         ],

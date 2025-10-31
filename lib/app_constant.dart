@@ -1,3 +1,5 @@
+import 'package:flatten/helpers/theme/app_style.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
@@ -14,7 +16,34 @@ toastMessage({String message = ""}) {
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.CENTER,
     timeInSecForIosWeb: 1,
-    fontSize: 16.0,
+    fontSize: 30.0,
+  );
+}
+
+void showCustomToast(String message, context) {
+  FToast fToast = FToast();
+  fToast.init(context); // Use your BuildContext if available
+
+  Widget toast = Container(
+    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(25.0),
+      color: AppColors.notificationSuccessBGColor,
+    ),
+    child: Text(
+      message,
+      style: TextStyle(
+        fontSize: 22, // 👈 Bigger size here
+        color: AppColors.notificationSuccessTextColor,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+
+  fToast.showToast(
+    child: toast,
+    gravity: ToastGravity.CENTER,
+    toastDuration: const Duration(seconds: 2),
   );
 }
 
@@ -50,7 +79,6 @@ Map<String, int> calculateWorkHours(String startTime, String endTime) {
 
   return {"hours": hours, "minutes": minutes};
 }
-
 
 String calculateTime(String? time) {
   time = time ?? DateTime.now().toString();

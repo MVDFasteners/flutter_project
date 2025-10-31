@@ -69,6 +69,7 @@ dependencies:
   cached_network_image: ^3.4.1
   image_picker: ^1.2.0
   flutter_image_compress: ^2.4.0
+  flutter_launcher_icons: ^0.14.4
 
 
 dev_dependencies:
@@ -103,6 +104,16 @@ flutter:
     - assets/icon/
     - assets/images/coin/
 
+
+
+
+# 👇 ADD THIS PART BELOW (outside flutter:)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo/app_logo.jpeg"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo/app_logo.jpeg"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

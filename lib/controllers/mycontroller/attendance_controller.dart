@@ -337,7 +337,7 @@ class AttendanceController extends MyController {
   //   }
   // }
 
-  Future<void> saveLoginEntryDirect({
+  Future<bool?> saveLoginEntryDirect({
     required Uint8List compressedBytes,
     required String fileName,
   }) async {
@@ -397,13 +397,13 @@ class AttendanceController extends MyController {
         );
       } else {
         toastMessage(message: "Id not found to update logout");
-        return;
+        return null;
       }
     }
 
     if (AuthService.sessionId == null) {
       print("❌ No session found. Please login first.");
-      return;
+      return null;
     }
 
     // 🔹 Direct ERPNext API endpoint
@@ -432,6 +432,10 @@ class AttendanceController extends MyController {
             loginId: loginId,
             url: apiUrl,
           );
+        }
+
+        if (loginId != null) {
+          return true;
         }
 
         Map<String, String> dateFilter = {};
