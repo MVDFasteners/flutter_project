@@ -434,10 +434,6 @@ class AttendanceController extends MyController {
           );
         }
 
-        if (loginId != null) {
-          return true;
-        }
-
         Map<String, String> dateFilter = {};
 
         if (selectedYear != null &&
@@ -456,6 +452,10 @@ class AttendanceController extends MyController {
             toDate: dateFilter['toDate'],
             employeeId: loginCtrl.userModel.employeeId,
           );
+        }
+
+        if (loginId != null) {
+          return true;
         }
       } else {
         print("❌ ERPNext Error ${response.statusCode}: ${response.body}");

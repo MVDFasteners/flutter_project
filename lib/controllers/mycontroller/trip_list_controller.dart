@@ -17,9 +17,10 @@ class TripListController extends GetxController {
   bool isFetchLoading = false;
 
   bool isLoading = false;
-  bool hasMore = true;
-  int limit = 20;
-  int offset = 0;
+
+  // bool hasMore = true;
+  // int limit = 20;
+  // int offset = 0;
 
   double? latitude;
   double? longitude;
@@ -174,8 +175,6 @@ class TripListController extends GetxController {
     String? fromDate,
     String? toDate,
     String? employeeId,
-    // int limitStart = 0,
-    // int limitPageLength = 20,
     String? name,
     required String tripStatus,
   }) async {
@@ -190,9 +189,10 @@ class TripListController extends GetxController {
 
     final Map<String, dynamic> body = {
       "company": company,
-      "from_date": fromDate,
-      "to_date": toDate,
+      "from_date": "$fromDate 00:00:00",
+      "to_date": "$toDate 23:59:59",
       "employee_id": employeeId,
+
       // "limit_start": limitStart,
       // "limit_page_length": limitPageLength,
       "status": tripStatus == "All" ? null : tripStatus,
@@ -294,7 +294,7 @@ class TripListController extends GetxController {
   //   update();
   // }
 
-  void onSelectMonth(String value) {
+  void onSelectMonth(String value) async {
     selectedMonth = value;
 
     Map<String, String> dateFilter = {};
@@ -305,7 +305,7 @@ class TripListController extends GetxController {
       print("From: ${dateFilter['fromDate']}");
       print("To: ${dateFilter['toDate']}");
     }
-    fetchTripList(
+    await fetchTripList(
       company: loginCtrl.userModel.company,
       fromDate: dateFilter['fromDate'],
       toDate: dateFilter['toDate'],

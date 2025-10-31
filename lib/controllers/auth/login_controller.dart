@@ -256,6 +256,7 @@ class LoginController extends MyController {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       await preferences.remove("session_id");
       response.body;
+      // userModel = UserModel();
       print("✅ Logout successful");
 
       AuthService.sessionId = null;
