@@ -25,6 +25,7 @@ class LoginPageState extends State<LoginPage>
   late LoginController controller;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -41,31 +42,33 @@ class LoginPageState extends State<LoginPage>
                 padding: MySpacing.all(flexSpacing),
                 child: Form(
                   key: _formKey,
-
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
                           child: MyText.titleLarge(
-                        "loginn".tr(),
-                        fontWeight: 700,
-                      )),
+                            "loginn".tr(),
+                            fontWeight: 700,
+                          )),
                       MySpacing.height(4),
                       Center(
                           child: MyText.bodySmall(
-                        "provide_email_and_password_to_access_admin_panel".tr(),
-                        muted: true,
-                      )),
+                            "provide_email_and_password_to_access_admin_panel"
+                                .tr(),
+                            muted: true,
+                          )),
                       MySpacing.height(64),
                       MyText.labelMedium(
-                        "email_address".tr().capitalizeWords,
+                        "email_address"
+                            .tr()
+                            .capitalizeWords,
                       ),
                       MySpacing.height(8),
                       TextFormField(
                         validator:
-                            controller.basicValidator.getValidation('email'),
+                        controller.basicValidator.getValidation('email'),
                         controller:
-                            controller.basicValidator.getController('email'),
+                        controller.basicValidator.getController('email'),
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                             labelText: "Email Address",
@@ -86,9 +89,9 @@ class LoginPageState extends State<LoginPage>
                       MySpacing.height(8),
                       TextFormField(
                         validator:
-                            controller.basicValidator.getValidation('password'),
+                        controller.basicValidator.getValidation('password'),
                         controller:
-                            controller.basicValidator.getController('password'),
+                        controller.basicValidator.getController('password'),
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: !controller.showPassword,
                         decoration: InputDecoration(
@@ -118,9 +121,12 @@ class LoginPageState extends State<LoginPage>
                           onPressed: controller.goToForgotPassword,
                           elevation: 0,
                           padding: MySpacing.xy(8, 0),
-                          splashColor: contentTheme.secondary.withValues(alpha: 0.1),
+                          splashColor: contentTheme.secondary.withValues(
+                              alpha: 0.1),
                           child: MyText.labelSmall(
-                            'forgot_password?'.tr().capitalizeWords,
+                            'forgot_password?'
+                                .tr()
+                                .capitalizeWords,
                             color: contentTheme.secondary,
                           ),
                         ),
@@ -137,13 +143,13 @@ class LoginPageState extends State<LoginPage>
                             children: [
                               controller.loading
                                   ? SizedBox(
-                                      height: 14,
-                                      width: 14,
-                                      child: CircularProgressIndicator(
-                                        color: colorScheme.onPrimary,
-                                        strokeWidth: 1.2,
-                                      ),
-                                    )
+                                height: 14,
+                                width: 14,
+                                child: CircularProgressIndicator(
+                                  color: colorScheme.onPrimary,
+                                  strokeWidth: 1.2,
+                                ),
+                              )
                                   : Container(),
                               if (controller.loading) MySpacing.width(16),
                               MyText.bodySmall(
@@ -160,7 +166,8 @@ class LoginPageState extends State<LoginPage>
                           onPressed: controller.gotoRegister,
                           elevation: 0,
                           padding: MySpacing.x(16),
-                          splashColor: contentTheme.secondary.withValues(alpha: 0.1),
+                          splashColor: contentTheme.secondary.withValues(
+                              alpha: 0.1),
                           child: MyText.labelMedium(
                             'i_haven_t_account'.tr(),
                             color: contentTheme.secondary,

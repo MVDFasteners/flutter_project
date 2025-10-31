@@ -23,8 +23,8 @@ class LoginController extends MyController {
   UserModel userModel = UserModel();
   String? userImage;
 
-  final String _dummyEmail = "jayasuryaarulselvam26@gmail.com";
-  final String _dummyPassword = "Mvdf@2025";
+  // final String _dummyEmail = "jayasuryaarulselvam26@gmail.com";
+  // final String _dummyPassword = "Mvdf@2025";
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -37,7 +37,7 @@ class LoginController extends MyController {
       required: true,
       label: "Email",
       validators: [MyEmailValidator()],
-      controller: TextEditingController(text: _dummyEmail),
+      controller: TextEditingController(),
     );
 
     basicValidator.addField(
@@ -45,7 +45,7 @@ class LoginController extends MyController {
       required: true,
       label: "Password",
       validators: [MyLengthValidator(min: 6, max: 10)],
-      controller: TextEditingController(text: _dummyPassword),
+      controller: TextEditingController(),
     );
   }
 

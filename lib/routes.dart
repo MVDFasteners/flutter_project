@@ -2,6 +2,7 @@ import 'package:flatten/helpers/services/auth_service.dart';
 import 'package:flatten/myPages/Home%20Page.dart';
 import 'package:flatten/myPages/TripListScreen.dart';
 import 'package:flatten/myPages/lead_screen.dart';
+import 'package:flatten/myPages/login_new_screen.dart';
 import 'package:flatten/views/apps/chat/chats_page.dart';
 import 'package:flatten/views/apps/ecommerce/add_product.dart';
 import 'package:flatten/views/apps/ecommerce/customers.dart';
@@ -152,7 +153,8 @@ List<GetPage> getPageRoute() {
       middlewares: [AuthMiddleware()],
     ),
     GetPage(name: '/faqs', page: () => FAQsPage()),
-    GetPage(name: '/auth/login', page: () => LoginPage()),
+    // GetPage(name: '/auth/login', page: () => LoginPage()),
+    GetPage(name: '/auth/login', page: () => LoginPageNew()),
     GetPage(
       name: '/auth/forgot_password',
       page: () => ForgotPasswordPage(),

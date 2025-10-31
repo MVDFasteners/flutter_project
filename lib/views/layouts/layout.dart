@@ -13,6 +13,8 @@ import 'package:flatten/helpers/widgets/my_responsiv.dart';
 import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/images.dart';
+import 'package:flatten/models/user.dart';
+import 'package:flatten/myPages/login_new_screen.dart';
 import 'package:flatten/views/auth/login.dart';
 import 'package:flatten/views/layouts/left_bar.dart';
 import 'package:flatten/views/layouts/right_bar.dart';
@@ -111,28 +113,35 @@ class Layout extends StatelessWidget {
             offsetY: 4,
             menu: Padding(
               padding: MySpacing.xy(8, 8),
-              child: MyContainer.rounded(
-                paddingAll: 0,
-                child: loginController.userImage != null
-                    ? Image.memory(
-                        base64Decode(loginController.userImage!.split(',')[1]),
-                        width: 50, // diameter
-                        height: 100,
-                        fit: BoxFit.fitHeight,
-                      )
-                    : Container(
-                        width: 50,
-                        height: 100,
-                        color: Colors.grey[200],
-                        child: Icon(Icons.person, size: 50),
-                      ),
+              child: InkWell(
+                onTap: () async {
+                  await _showProfile(context);
+                },
+                child: MyContainer.rounded(
+                  paddingAll: 0,
+                  child: loginController.userImage != null
+                      ? Image.memory(
+                          base64Decode(
+                            loginController.userImage!.split(',')[1],
+                          ),
+                          width: 50, // diameter
+                          height: 100,
+                          fit: BoxFit.fitHeight,
+                        )
+                      : Container(
+                          width: 50,
+                          height: 100,
+                          color: Colors.grey[200],
+                          child: Icon(Icons.person, size: 50),
+                        ),
 
-                // Image.asset(
-                //   Images.avatars[0],
-                //   height: 28,
-                //   width: 28,
-                //   fit: BoxFit.cover,
-                // ),
+                  // Image.asset(
+                  //   Images.avatars[0],
+                  //   height: 28,
+                  //   width: 28,
+                  //   fit: BoxFit.cover,
+                  // ),
+                ),
               ),
             ),
             menuBuilder: (_) => buildAccountMenu(context),
@@ -292,96 +301,189 @@ class Layout extends StatelessWidget {
   }
 
   Widget buildAccountMenu(context) {
-    return MyContainer.bordered(
-      paddingAll: 0,
-      width: 150,
-      child: Padding(
-        padding: MySpacing.xy(8, 8),
-        child: MyButton(
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          onPressed: () async {
-            await loginController.userLogOut();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
-            );
-          },
-          borderRadiusAll: AppStyle.buttonRadius.medium,
-          padding: MySpacing.xy(8, 4),
-          splashColor: contentTheme.danger.withAlpha(28),
-          backgroundColor: Colors.transparent,
-          child: Row(
-            children: [
-              Icon(LucideIcons.log_out, size: 14, color: contentTheme.danger),
-              MySpacing.width(8),
-              MyText.labelMedium(
-                "Log out",
-                fontWeight: 600,
-                color: contentTheme.danger,
-              ),
-            ],
-          ),
+    return
+
+      Container();
+    //   MyContainer.bordered(
+    //   paddingAll: 0,
+    //   width: 150,
+    //   child: Padding(
+    //     padding: MySpacing.xy(8, 8),
+    //     child: Column(
+    //       children: [
+    //         MyButton(
+    //           onPressed: () async {
+    //             await _showProfile(context);
+    //           },
+    //           child: MyText.labelMedium(
+    //             "View Profile",
+    //             fontWeight: 600,
+    //             color: Colors.white,
+    //           ),
+    //         ),
+    //         MyButton(
+    //           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    //           onPressed: () async {
+    //             await loginController.userLogOut();
+    //             Navigator.pushAndRemoveUntil(
+    //               context,
+    //               MaterialPageRoute(builder: (context) => LoginPageNew()),
+    //               (Route<dynamic> route) =>
+    //                   false, // removes all previous routes
+    //             );
+    //           },
+    //           borderRadiusAll: AppStyle.buttonRadius.medium,
+    //           padding: MySpacing.xy(8, 4),
+    //           splashColor: contentTheme.danger.withAlpha(28),
+    //           backgroundColor: Colors.transparent,
+    //           child: Row(
+    //             children: [
+    //               Icon(
+    //                 LucideIcons.log_out,
+    //                 size: 14,
+    //                 color: contentTheme.danger,
+    //               ),
+    //               MySpacing.width(8),
+    //               MyText.labelMedium(
+    //                 "Log out",
+    //                 fontWeight: 600,
+    //                 color: contentTheme.danger,
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    //   // Column(
+    //   //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   //   children: [
+    //   //     Padding(
+    //   //       padding: MySpacing.xy(8, 8),
+    //   //       child: Column(
+    //   //         crossAxisAlignment: CrossAxisAlignment.start,
+    //   //         children: [
+    //   //           MyButton(
+    //   //             onPressed: () => {},
+    //   //             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    //   //             borderRadiusAll: AppStyle.buttonRadius.medium,
+    //   //             padding: MySpacing.xy(8, 4),
+    //   //             splashColor: contentTheme.onBackground.withAlpha(20),
+    //   //             backgroundColor: Colors.transparent,
+    //   //             child: Row(
+    //   //               children: [
+    //   //                 Icon(
+    //   //                   LucideIcons.user,
+    //   //                   size: 14,
+    //   //                   color: contentTheme.onBackground,
+    //   //                 ),
+    //   //                 MySpacing.width(8),
+    //   //                 MyText.labelMedium("My Account", fontWeight: 600),
+    //   //               ],
+    //   //             ),
+    //   //           ),
+    //   //           MySpacing.height(4),
+    //   //           MyButton(
+    //   //             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    //   //             onPressed: () => {},
+    //   //             borderRadiusAll: AppStyle.buttonRadius.medium,
+    //   //             padding: MySpacing.xy(8, 4),
+    //   //             splashColor: contentTheme.onBackground.withAlpha(20),
+    //   //             backgroundColor: Colors.transparent,
+    //   //             child: Row(
+    //   //               children: [
+    //   //                 Icon(
+    //   //                   LucideIcons.settings,
+    //   //                   size: 14,
+    //   //                   color: contentTheme.onBackground,
+    //   //                 ),
+    //   //                 MySpacing.width(8),
+    //   //                 InkWell(
+    //   //                   onTap: () {
+    //   //                     toastMessage(message: "working");
+    //   //                   },
+    //   //                   child: MyText.labelMedium("Settings", fontWeight: 600),
+    //   //                 ),
+    //   //               ],
+    //   //             ),
+    //   //           ),
+    //   //         ],
+    //   //       ),
+    //   //     ),
+    //   //     Divider(height: 1, thickness: 1),
+    //   //
+    //   //   ],
+    //   // ),
+    // );
+  }
+
+  Future<void> _showProfile(context) async {
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Profile View"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+              onTap: () async {
+                toastMessage(message: "Next Update Will Come");
+              },
+              child: _profileImage(150),
+            ),
+            const SizedBox(height: 8),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(loginController.userModel.fullName ?? "No Name"),
+                const SizedBox(height: 4),
+                Text(loginController.userModel.employeeId ?? "No Employee Id"),
+                const SizedBox(height: 4),
+                Text(loginController.userModel.department ?? "No Department"),
+                const SizedBox(height: 4),
+                Text(loginController.userModel.company ?? "No Company"),
+                const SizedBox(height: 4),
+              ],
+            ),
+          ],
         ),
+        actions: [
+          TextButton.icon(
+            icon: Icon(Icons.logout, color: Colors.red),
+            onPressed: () async {
+              await loginController.userLogOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPageNew()),
+                (Route<dynamic> route) => false, // removes all previous routes
+              );
+            },
+            label: Text("Log Out", style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
-      // Column(
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   children: [
-      //     Padding(
-      //       padding: MySpacing.xy(8, 8),
-      //       child: Column(
-      //         crossAxisAlignment: CrossAxisAlignment.start,
-      //         children: [
-      //           MyButton(
-      //             onPressed: () => {},
-      //             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      //             borderRadiusAll: AppStyle.buttonRadius.medium,
-      //             padding: MySpacing.xy(8, 4),
-      //             splashColor: contentTheme.onBackground.withAlpha(20),
-      //             backgroundColor: Colors.transparent,
-      //             child: Row(
-      //               children: [
-      //                 Icon(
-      //                   LucideIcons.user,
-      //                   size: 14,
-      //                   color: contentTheme.onBackground,
-      //                 ),
-      //                 MySpacing.width(8),
-      //                 MyText.labelMedium("My Account", fontWeight: 600),
-      //               ],
-      //             ),
-      //           ),
-      //           MySpacing.height(4),
-      //           MyButton(
-      //             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      //             onPressed: () => {},
-      //             borderRadiusAll: AppStyle.buttonRadius.medium,
-      //             padding: MySpacing.xy(8, 4),
-      //             splashColor: contentTheme.onBackground.withAlpha(20),
-      //             backgroundColor: Colors.transparent,
-      //             child: Row(
-      //               children: [
-      //                 Icon(
-      //                   LucideIcons.settings,
-      //                   size: 14,
-      //                   color: contentTheme.onBackground,
-      //                 ),
-      //                 MySpacing.width(8),
-      //                 InkWell(
-      //                   onTap: () {
-      //                     toastMessage(message: "working");
-      //                   },
-      //                   child: MyText.labelMedium("Settings", fontWeight: 600),
-      //                 ),
-      //               ],
-      //             ),
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //     Divider(height: 1, thickness: 1),
-      //
-      //   ],
-      // ),
+    );
+  }
+
+  Widget _profileImage(double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(shape: BoxShape.circle),
+      child: loginController.userImage != null
+          ? Image.memory(
+              base64Decode(loginController.userImage!.split(',')[1]),
+              width: size, // diameter
+              height: size,
+              fit: BoxFit.fitHeight,
+            )
+          : Container(
+              width: size,
+              height: size,
+              color: Colors.grey[200],
+              child: Icon(Icons.person, size: 50),
+            ),
     );
   }
 }
