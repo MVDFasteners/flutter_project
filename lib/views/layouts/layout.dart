@@ -88,22 +88,22 @@ class Layout extends StatelessWidget {
               ThemeCustomizer.instance.theme == ThemeMode.dark
                   ? LucideIcons.sun
                   : LucideIcons.moon,
-              size: 18,
+              size: 24,
               color: topBarTheme.onBackground,
             ),
           ),
           MySpacing.width(8),
-          CustomPopupMenu(
-            backdrop: true,
-            onChange: (_) {},
-            offsetX: -180,
-            menu: Padding(
-              padding: MySpacing.xy(8, 8),
-              child: Center(child: Icon(LucideIcons.bell, size: 18)),
-            ),
-            menuBuilder: (_) => buildNotifications(),
-          ),
-          MySpacing.width(8),
+          // CustomPopupMenu(
+          //   backdrop: true,
+          //   onChange: (_) {},
+          //   offsetX: -180,
+          //   menu: Padding(
+          //     padding: MySpacing.xy(8, 8),
+          //     child: Center(child: Icon(LucideIcons.bell, size: 18)),
+          //   ),
+          //   menuBuilder: (_) => buildNotifications(),
+          // ),
+          // MySpacing.width(8),
           CustomPopupMenu(
             backdrop: true,
             onChange: (_) {},
@@ -295,99 +295,93 @@ class Layout extends StatelessWidget {
     return MyContainer.bordered(
       paddingAll: 0,
       width: 150,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: MySpacing.xy(8, 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MyButton(
-                  onPressed: () => {},
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  borderRadiusAll: AppStyle.buttonRadius.medium,
-                  padding: MySpacing.xy(8, 4),
-                  splashColor: contentTheme.onBackground.withAlpha(20),
-                  backgroundColor: Colors.transparent,
-                  child: Row(
-                    children: [
-                      Icon(
-                        LucideIcons.user,
-                        size: 14,
-                        color: contentTheme.onBackground,
-                      ),
-                      MySpacing.width(8),
-                      MyText.labelMedium("My Account", fontWeight: 600),
-                    ],
-                  ),
-                ),
-                MySpacing.height(4),
-                MyButton(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  onPressed: () => {},
-                  borderRadiusAll: AppStyle.buttonRadius.medium,
-                  padding: MySpacing.xy(8, 4),
-                  splashColor: contentTheme.onBackground.withAlpha(20),
-                  backgroundColor: Colors.transparent,
-                  child: Row(
-                    children: [
-                      Icon(
-                        LucideIcons.settings,
-                        size: 14,
-                        color: contentTheme.onBackground,
-                      ),
-                      MySpacing.width(8),
-                      InkWell(
-                        onTap: () {
-                          toastMessage(message: "working");
-                        },
-                        child: MyText.labelMedium("Settings", fontWeight: 600),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 1, thickness: 1),
-          Padding(
-            padding: MySpacing.xy(8, 8),
-            child: MyButton(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onPressed: () => {},
-              borderRadiusAll: AppStyle.buttonRadius.medium,
-              padding: MySpacing.xy(8, 4),
-              splashColor: contentTheme.danger.withAlpha(28),
-              backgroundColor: Colors.transparent,
-              child: Row(
-                children: [
-                  Icon(
-                    LucideIcons.log_out,
-                    size: 14,
-                    color: contentTheme.danger,
-                  ),
-                  MySpacing.width(8),
-                  InkWell(
-                    onTap: () async {
-                      await loginController.userLogOut();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    child: MyText.labelMedium(
-                      "Log out",
-                      fontWeight: 600,
-                      color: contentTheme.danger,
-                    ),
-                  ),
-                ],
+      child: Padding(
+        padding: MySpacing.xy(8, 8),
+        child: MyButton(
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          onPressed: () async {
+            await loginController.userLogOut();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            );
+          },
+          borderRadiusAll: AppStyle.buttonRadius.medium,
+          padding: MySpacing.xy(8, 4),
+          splashColor: contentTheme.danger.withAlpha(28),
+          backgroundColor: Colors.transparent,
+          child: Row(
+            children: [
+              Icon(LucideIcons.log_out, size: 14, color: contentTheme.danger),
+              MySpacing.width(8),
+              MyText.labelMedium(
+                "Log out",
+                fontWeight: 600,
+                color: contentTheme.danger,
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
+      // Column(
+      //   crossAxisAlignment: CrossAxisAlignment.start,
+      //   children: [
+      //     Padding(
+      //       padding: MySpacing.xy(8, 8),
+      //       child: Column(
+      //         crossAxisAlignment: CrossAxisAlignment.start,
+      //         children: [
+      //           MyButton(
+      //             onPressed: () => {},
+      //             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      //             borderRadiusAll: AppStyle.buttonRadius.medium,
+      //             padding: MySpacing.xy(8, 4),
+      //             splashColor: contentTheme.onBackground.withAlpha(20),
+      //             backgroundColor: Colors.transparent,
+      //             child: Row(
+      //               children: [
+      //                 Icon(
+      //                   LucideIcons.user,
+      //                   size: 14,
+      //                   color: contentTheme.onBackground,
+      //                 ),
+      //                 MySpacing.width(8),
+      //                 MyText.labelMedium("My Account", fontWeight: 600),
+      //               ],
+      //             ),
+      //           ),
+      //           MySpacing.height(4),
+      //           MyButton(
+      //             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      //             onPressed: () => {},
+      //             borderRadiusAll: AppStyle.buttonRadius.medium,
+      //             padding: MySpacing.xy(8, 4),
+      //             splashColor: contentTheme.onBackground.withAlpha(20),
+      //             backgroundColor: Colors.transparent,
+      //             child: Row(
+      //               children: [
+      //                 Icon(
+      //                   LucideIcons.settings,
+      //                   size: 14,
+      //                   color: contentTheme.onBackground,
+      //                 ),
+      //                 MySpacing.width(8),
+      //                 InkWell(
+      //                   onTap: () {
+      //                     toastMessage(message: "working");
+      //                   },
+      //                   child: MyText.labelMedium("Settings", fontWeight: 600),
+      //                 ),
+      //               ],
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //     Divider(height: 1, thickness: 1),
+      //
+      //   ],
+      // ),
     );
   }
 }

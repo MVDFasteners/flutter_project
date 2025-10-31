@@ -1,7 +1,7 @@
+import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/auth/login_controller.dart';
 import 'package:flatten/myPages/TripListScreen.dart';
 import 'package:flatten/views/dashboard/attendance.dart';
-import 'package:flatten/views/layouts/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
@@ -24,9 +24,6 @@ class CompanyHomePage extends StatefulWidget {
 class _CompanyHomePageState extends State<CompanyHomePage>
     with SingleTickerProviderStateMixin {
   late LoginController controller;
-
-  // late AttendanceController attendanceController;
-  // late TripListController tripListController;
 
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -65,8 +62,6 @@ class _CompanyHomePageState extends State<CompanyHomePage>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
     controller = Get.put(LoginController());
-    // attendanceController = Get.put(AttendanceController(this));
-    // tripListController = Get.put(TripListController());
   }
 
   @override
@@ -74,13 +69,6 @@ class _CompanyHomePageState extends State<CompanyHomePage>
     _controller.dispose();
     super.dispose();
   }
-
-  // void handleAttendance(BuildContext context) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const AttendancePage()),
-  //   );
-  // }
 
   void handleTaskList(BuildContext context) {
     ScaffoldMessenger.of(
@@ -132,222 +120,230 @@ class _CompanyHomePageState extends State<CompanyHomePage>
     final double logoSize = screenWidth * 0.45;
     final double cardSize = screenWidth * 0.36;
 
-    return
-    //   InkWell(
-    //   onTap: () {
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute<void>(builder: (context) => TripListScreen()),
-    //     );
-    //   },
-    //   child: Container(color: Colors.red, height: 2000),
-    // );
-    Stack(
-      children: [
-        Container(color: lighten(baseTeal, 0.99)),
-        Positioned(
-          top: -screenWidth * 0.28,
-          left: -screenWidth * 0.21,
-          child: _3dCircle(
-            width: screenWidth * 0.86,
-            height: screenWidth * 0.86,
-            color: lighten(baseTeal, 0.77),
-            blur: 44,
-            offset: const Offset(12, 28),
-            highlightStrength: 0.51,
-            gradientStrength: 0.31,
-            opacity: 0.72,
-          ),
-        ),
-        // Top right (smaller)
-        Positioned(
-          top: screenWidth * 0.16,
-          right: screenWidth * 0.09,
-          child: _3dCircle(
-            width: screenWidth * 0.31,
-            height: screenWidth * 0.31,
-            color: lighten(baseTeal, 0.89),
-            blur: 34,
-            offset: const Offset(-16, 10),
-            highlightStrength: 0.58,
-            gradientStrength: 0.21,
-            opacity: 0.64,
-          ),
-        ),
-        // Center right (medium)
-        Positioned(
-          top: screenHeight * 0.38,
-          right: screenWidth * 0.27,
-          child: _3dCircle(
-            width: screenWidth * 0.36,
-            height: screenWidth * 0.36,
-            color: lighten(baseTeal, 0.89),
-            blur: 19,
-            offset: const Offset(2, 10),
-            highlightStrength: 0.51,
-            gradientStrength: 0.31,
-            opacity: 0.50,
-          ),
-        ),
-        // Center ellipse band
-        Positioned(
-          left: screenWidth * 0.21,
-          top: screenHeight * 0.47,
-          child: Transform.rotate(
-            angle: -0.44,
-            child: Container(
-              width: screenWidth * 0.86,
-              height: screenWidth * 0.15,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(screenWidth * 0.21),
-                gradient: LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  colors: [
-                    lighten(baseTeal, 0.835).withOpacity(0.25),
-                    lighten(baseTeal, 0.995).withOpacity(0.16),
-                    Colors.transparent,
-                  ],
+    DateTime? lastPressed;
+
+    Future<bool> onWillPop() async {
+      final now = DateTime.now();
+      if (lastPressed == null ||
+          now.difference(lastPressed!) > const Duration(seconds: 2)) {
+        lastPressed = now;
+        toastMessage(message: "Press back again to exit");
+        return false; // don’t exit yet
+      }
+      return true; // exit app
+    }
+
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(color: lighten(baseTeal, 0.99)),
+            Positioned(
+              top: -screenWidth * 0.28,
+              left: -screenWidth * 0.21,
+              child: _3dCircle(
+                width: screenWidth * 0.86,
+                height: screenWidth * 0.86,
+                color: lighten(baseTeal, 0.77),
+                blur: 44,
+                offset: const Offset(12, 28),
+                highlightStrength: 0.51,
+                gradientStrength: 0.31,
+                opacity: 0.72,
+              ),
+            ),
+            // Top right (smaller)
+            Positioned(
+              top: screenWidth * 0.16,
+              right: screenWidth * 0.09,
+              child: _3dCircle(
+                width: screenWidth * 0.31,
+                height: screenWidth * 0.31,
+                color: lighten(baseTeal, 0.89),
+                blur: 34,
+                offset: const Offset(-16, 10),
+                highlightStrength: 0.58,
+                gradientStrength: 0.21,
+                opacity: 0.64,
+              ),
+            ),
+            // Center right (medium)
+            Positioned(
+              top: screenHeight * 0.38,
+              right: screenWidth * 0.27,
+              child: _3dCircle(
+                width: screenWidth * 0.36,
+                height: screenWidth * 0.36,
+                color: lighten(baseTeal, 0.89),
+                blur: 19,
+                offset: const Offset(2, 10),
+                highlightStrength: 0.51,
+                gradientStrength: 0.31,
+                opacity: 0.50,
+              ),
+            ),
+            // Center ellipse band
+            Positioned(
+              left: screenWidth * 0.21,
+              top: screenHeight * 0.47,
+              child: Transform.rotate(
+                angle: -0.44,
+                child: Container(
+                  width: screenWidth * 0.86,
+                  height: screenWidth * 0.15,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(screenWidth * 0.21),
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        lighten(baseTeal, 0.835).withOpacity(0.25),
+                        lighten(baseTeal, 0.995).withOpacity(0.16),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-        // Middle, slightly left (small)
-        Positioned(
-          top: screenHeight * 0.63,
-          left: screenWidth * 0.21,
-          child: _3dCircle(
-            width: screenWidth * 0.19,
-            height: screenWidth * 0.19,
-            color: lighten(baseTeal, 0.73),
-            blur: 19,
-            offset: const Offset(4, 15),
-            highlightStrength: 0.68,
-            gradientStrength: 0.225,
-            opacity: 0.65,
-          ),
-        ),
-        // Bottom left (medium)
-        Positioned(
-          bottom: -screenWidth * 0.15,
-          left: -screenWidth * 0.08,
-          child: _3dCircle(
-            width: screenWidth * 0.33,
-            height: screenWidth * 0.33,
-            color: lighten(baseTeal, 0.79),
-            blur: 18,
-            offset: const Offset(8, 10),
-            highlightStrength: 0.73,
-            gradientStrength: 0.15,
-            opacity: 0.82,
-          ),
-        ),
-        // Small bottom right
-        Positioned(
-          bottom: screenWidth * 0.15,
-          right: screenWidth * 0.18,
-          child: _3dCircle(
-            width: screenWidth * 0.13,
-            height: screenWidth * 0.13,
-            color: lighten(baseTeal, 0.95),
-            blur: 12,
-            offset: const Offset(0, 2),
-            highlightStrength: 0.72,
-            gradientStrength: 0.18,
-            opacity: 0.55,
-          ),
-        ),
-        // Center behind logo (main subtle 3D circle)
-        Positioned(
-          top: screenHeight * 0.13,
-          left: (screenWidth - logoSize) / 2 - (screenWidth * 0.06),
-          child: _3dCircle(
-            width: logoSize * 1.25,
-            height: logoSize * 1.1,
-            color: lighten(baseTeal, 0.92),
-            blur: 22,
-            offset: const Offset(0, 18),
-            highlightStrength: 0.58,
-            gradientStrength: 0.19,
-            opacity: 0.44,
-          ),
-        ),
-        SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 800),
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        builder: (context, value, child) => Transform.scale(
-                          scale: value,
-                          child: SizedBox(
-                            width: logoSize,
-                            height: logoSize,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: Image.asset(
-                                  'assets/images/logo/company_logo.png',
-                                  fit: BoxFit.contain,
+            // Middle, slightly left (small)
+            Positioned(
+              top: screenHeight * 0.63,
+              left: screenWidth * 0.21,
+              child: _3dCircle(
+                width: screenWidth * 0.19,
+                height: screenWidth * 0.19,
+                color: lighten(baseTeal, 0.73),
+                blur: 19,
+                offset: const Offset(4, 15),
+                highlightStrength: 0.68,
+                gradientStrength: 0.225,
+                opacity: 0.65,
+              ),
+            ),
+            // Bottom left (medium)
+            Positioned(
+              bottom: -screenWidth * 0.15,
+              left: -screenWidth * 0.08,
+              child: _3dCircle(
+                width: screenWidth * 0.33,
+                height: screenWidth * 0.33,
+                color: lighten(baseTeal, 0.79),
+                blur: 18,
+                offset: const Offset(8, 10),
+                highlightStrength: 0.73,
+                gradientStrength: 0.15,
+                opacity: 0.82,
+              ),
+            ),
+            // Small bottom right
+            Positioned(
+              bottom: screenWidth * 0.15,
+              right: screenWidth * 0.18,
+              child: _3dCircle(
+                width: screenWidth * 0.13,
+                height: screenWidth * 0.13,
+                color: lighten(baseTeal, 0.95),
+                blur: 12,
+                offset: const Offset(0, 2),
+                highlightStrength: 0.72,
+                gradientStrength: 0.18,
+                opacity: 0.55,
+              ),
+            ),
+            // Center behind logo (main subtle 3D circle)
+            Positioned(
+              top: screenHeight * 0.13,
+              left: (screenWidth - logoSize) / 2 - (screenWidth * 0.06),
+              child: _3dCircle(
+                width: logoSize * 1.25,
+                height: logoSize * 1.1,
+                color: lighten(baseTeal, 0.92),
+                blur: 22,
+                offset: const Offset(0, 18),
+                highlightStrength: 0.58,
+                gradientStrength: 0.19,
+                opacity: 0.44,
+              ),
+            ),
+            SafeArea(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: TweenAnimationBuilder<double>(
+                            duration: const Duration(milliseconds: 800),
+                            tween: Tween(begin: 0.0, end: 1.0),
+                            builder: (context, value, child) => Transform.scale(
+                              scale: value,
+                              child: SizedBox(
+                                width: logoSize,
+                                height: logoSize,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(0),
+                                    child: Image.asset(
+                                      'assets/images/logo/company_logo.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 32.0),
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 18,
+                          runSpacing: 18,
+                          children: buttonData.map((data) {
+                            return _buildRoundedCardButton(
+                              label: data['label'],
+                              imageAsset: data['imageAsset'],
+                              onTap: () {
+                                if (data['onTap'] == 'attendance') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (context) => const Attendance(),
+                                    ),
+                                  );
+                                  // handleAttendance(context);
+                                } else if (data['onTap'] == 'taskList') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (context) => TripListScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                              size: cardSize,
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 32.0),
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 18,
-                      runSpacing: 18,
-                      children: buttonData.map((data) {
-                        return _buildRoundedCardButton(
-                          label: data['label'],
-                          imageAsset: data['imageAsset'],
-                          onTap: () {
-                            if (data['onTap'] == 'attendance') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (context) => const Attendance(),
-                                ),
-                              );
-                              // handleAttendance(context);
-                            } else if (data['onTap'] == 'taskList') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (context) => TripListScreen(),
-                                ),
-                              );
-                            }
-                          },
-                          size: cardSize,
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

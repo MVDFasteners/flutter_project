@@ -40,7 +40,6 @@ class _TripListScreenState extends State<TripListScreen>
   @override
   Widget build(BuildContext context) {
     return Layout(
-
       leadingWidget: IconButton(
         onPressed: () {
           Navigator.pop(context);
@@ -144,7 +143,7 @@ class _TripListScreenState extends State<TripListScreen>
               Expanded(
                 flex: 4,
                 child: RefreshIndicator(
-                  onRefresh: controller.refreshItems,
+                  onRefresh: controller.fetchTripListWithFilters,
                   child: ListView.builder(
                     // controller: controller.scrollController,
                     itemCount:
@@ -324,7 +323,11 @@ class _TripListScreenState extends State<TripListScreen>
           MyText.titleLarge(endDate, fontWeight: 700),
           Row(
             children: [
-              MyText.bodyMedium(distanceTraveled, fontWeight: 600, color: Colors.red,),
+              MyText.bodyMedium(
+                distanceTraveled,
+                fontWeight: 600,
+                color: Colors.red,
+              ),
               Spacer(),
               MyContainer(
                 paddingAll: 8,

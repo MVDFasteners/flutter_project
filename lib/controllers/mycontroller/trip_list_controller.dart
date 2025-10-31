@@ -57,29 +57,29 @@ class TripListController extends GetxController {
         fromDate: dateFilter['fromDate'],
         toDate: dateFilter['toDate'],
         employeeId: loginCtrl.userModel.employeeId,
-        limitStart: offset,
-        limitPageLength: limit,
+        // limitStart: offset,
+        // limitPageLength: limit,
         tripStatus: tripStatus,
       );
     }
 
-    scrollController.addListener(() {
-      if (scrollController.position.pixels >=
-              scrollController.position.maxScrollExtent - 200 &&
-          !isLoading) {
-        fetchTripList(
-          company: loginCtrl.userModel.company,
-          fromDate: dateFilter['fromDate'],
-          toDate: dateFilter['toDate'],
-          employeeId: loginCtrl.userModel.employeeId,
-          limitStart: offset,
-          limitPageLength: limit,
-          tripStatus: tripStatus,
-        );
-      } else {
-        print("Not triggered");
-      }
-    });
+    // scrollController.addListener(() {
+    //   if (scrollController.position.pixels >=
+    //           scrollController.position.maxScrollExtent - 200 &&
+    //       !isLoading) {
+    //     fetchTripList(
+    //       company: loginCtrl.userModel.company,
+    //       fromDate: dateFilter['fromDate'],
+    //       toDate: dateFilter['toDate'],
+    //       employeeId: loginCtrl.userModel.employeeId,
+    //       // limitStart: offset,
+    //       // limitPageLength: limit,
+    //       tripStatus: tripStatus,
+    //     );
+    //   } else {
+    //     print("Not triggered");
+    //   }
+    // });
   }
 
   void updateCurrentTrip(Trip trip) {
@@ -174,8 +174,8 @@ class TripListController extends GetxController {
     String? fromDate,
     String? toDate,
     String? employeeId,
-    int limitStart = 0,
-    int limitPageLength = 20,
+    // int limitStart = 0,
+    // int limitPageLength = 20,
     String? name,
     required String tripStatus,
   }) async {
@@ -193,8 +193,8 @@ class TripListController extends GetxController {
       "from_date": fromDate,
       "to_date": toDate,
       "employee_id": employeeId,
-      "limit_start": limitStart,
-      "limit_page_length": limitPageLength,
+      // "limit_start": limitStart,
+      // "limit_page_length": limitPageLength,
       "status": tripStatus == "All" ? null : tripStatus,
       "name": name,
     };
@@ -213,14 +213,14 @@ class TripListController extends GetxController {
         final data = jsonDecode(response.body);
         final tripsJson = data["message"] as List<dynamic>? ?? [];
 
-        if (limitStart == 0) {
-          travelLogs.clear();
-        }
+        // if (limitStart == 0) {
+        travelLogs.clear();
+        // }
 
         travelLogs.addAll(tripsJson.map((e) => Trip.fromJson(e)).toList());
 
-        offset += tripsJson.length;
-        hasMore = tripsJson.length == limitPageLength;
+        // offset += tripsJson.length;
+        // hasMore = tripsJson.length == limitPageLength;
 
         print("✅ Trip List fetched: ${travelLogs.length} trips");
       } else {
@@ -317,7 +317,7 @@ class TripListController extends GetxController {
     update();
   }
 
-  void onSelectYear(String value) {
+  Future<void> onSelectYear(String value) async {
     selectedYear = value;
     Map<String, String> dateFilter = {};
     if (selectedYear != null &&
@@ -326,13 +326,13 @@ class TripListController extends GetxController {
       dateFilter = getMonthDateRange(int.parse(selectedYear!), selectedMonth!);
       print("From: ${dateFilter['fromDate']}");
       print("To: ${dateFilter['toDate']}");
-      fetchTripList(
+      await fetchTripList(
         company: loginCtrl.userModel.company,
         fromDate: dateFilter['fromDate'],
         toDate: dateFilter['toDate'],
         employeeId: loginCtrl.userModel.employeeId,
-        limitPageLength: 20,
-        limitStart: 0,
+        // limitPageLength: 20,
+        // limitStart: 0,
         tripStatus: tripStatus,
       );
     }
@@ -711,13 +711,13 @@ class TripListController extends GetxController {
     }
   }
 
-  Future<void> refreshItems() async {
-    offset = 0;
-    hasMore = true;
-    travelLogs.clear();
-    update();
-    await fetchTripList(tripStatus: tripStatus);
-  }
+  // Future<void> refreshItems() async {
+  //   offset = 0;
+  //   hasMore = true;
+  //   travelLogs.clear();
+  //   update();
+  //   await fetchTripList(tripStatus: tripStatus);
+  // }
 
   @override
   void onClose() {
