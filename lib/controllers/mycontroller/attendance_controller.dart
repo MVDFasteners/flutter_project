@@ -67,6 +67,10 @@ class AttendanceController extends MyController {
       }
     });
 
+    fetchListWithFilter();
+  }
+
+  Future<void> fetchListWithFilter() async {
     Map<String, String> dateFilter = {};
 
     if (selectedYear != null &&
@@ -76,7 +80,7 @@ class AttendanceController extends MyController {
       print("From: ${dateFilter['fromDate']}");
       print("To: ${dateFilter['toDate']}");
 
-      fetchLoginList(
+      await fetchLoginList(
         company: loginCtrl.userModel.company,
         fromDate: dateFilter['fromDate'],
         toDate: dateFilter['toDate'],

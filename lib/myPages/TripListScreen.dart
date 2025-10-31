@@ -11,7 +11,6 @@ import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/models/trip_list.dart';
 import 'package:flatten/myPages/locaiton_service.dart';
-import 'package:flatten/myPages/myScreenList.dart';
 import 'package:flatten/myPages/placeList.dart';
 import 'package:flatten/responsive.dart';
 import 'package:flatten/views/layouts/layout.dart';

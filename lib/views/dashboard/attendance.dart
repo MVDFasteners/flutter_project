@@ -52,7 +52,6 @@ class _AttendanceState extends State<Attendance>
   @override
   Widget build(BuildContext context) {
     return Layout(
-
       leadingWidget: IconButton(
         onPressed: () {
           Navigator.pop(context);
@@ -146,59 +145,62 @@ class _AttendanceState extends State<Attendance>
                 flex: 3,
                 child: controller.employeeLoginList.isEmpty
                     ? Center(
-                      child: Text(
-                        "No Records Found",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    )
-                    : ListView.builder(
-                        padding: MySpacing.xy(8, 0),
-                        shrinkWrap: true,
-                        itemCount: controller.employeeLoginList.length,
-                        itemBuilder: (context, index) {
-                          EmployeeLogin employeeDetails =
-                              controller.employeeLoginList[index];
+                        child: Text(
+                          "No Records Found",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: controller.fetchListWithFilter,
+                        child: ListView.builder(
+                          padding: MySpacing.xy(8, 0),
+                          shrinkWrap: true,
+                          itemCount: controller.employeeLoginList.length,
+                          itemBuilder: (context, index) {
+                            EmployeeLogin employeeDetails =
+                                controller.employeeLoginList[index];
 
-                          String inTime =
-                              employeeDetails.inTime == null ||
-                                  employeeDetails.inTime == ""
-                              ? "No Time"
-                              : _formatTime(employeeDetails.inTime!);
+                            String inTime =
+                                employeeDetails.inTime == null ||
+                                    employeeDetails.inTime == ""
+                                ? "No Time"
+                                : _formatTime(employeeDetails.inTime!);
 
-                          String outTime =
-                              employeeDetails.outTime == null ||
-                                  employeeDetails.outTime == ""
-                              ? "No Time"
-                              : _formatTime(employeeDetails.outTime!);
+                            String outTime =
+                                employeeDetails.outTime == null ||
+                                    employeeDetails.outTime == ""
+                                ? "No Time"
+                                : _formatTime(employeeDetails.outTime!);
 
-                          String workHrs =
-                              employeeDetails.inTime != null &&
-                                  employeeDetails.outTime != null
-                              ? _calculateWorkHours(
-                                  employeeDetails.inTime!,
-                                  employeeDetails.outTime!,
-                                )
-                              : "0 hrs 0 min";
+                            String workHrs =
+                                employeeDetails.inTime != null &&
+                                    employeeDetails.outTime != null
+                                ? _calculateWorkHours(
+                                    employeeDetails.inTime!,
+                                    employeeDetails.outTime!,
+                                  )
+                                : "0 hrs 0 min";
 
-                          return InkWell(
-                            onTap: () async {
-                              await controller.updateEmployeeLogin(
-                                controller.employeeLoginList[index],
-                              );
-                              Get.toNamed('/login_details');
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: stateCardDetail(
-                                date: employeeDetails.inDate ?? "No Date",
-                                location:
-                                    employeeDetails.inLocation ?? "Not Found",
-                                time: "IN: $inTime | OUT: $outTime",
-                                workHours: workHrs,
+                            return InkWell(
+                              onTap: () async {
+                                await controller.updateEmployeeLogin(
+                                  controller.employeeLoginList[index],
+                                );
+                                Get.toNamed('/login_details');
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: stateCardDetail(
+                                  date: employeeDetails.inDate ?? "No Date",
+                                  location:
+                                      employeeDetails.inLocation ?? "Not Found",
+                                  time: "IN: $inTime | OUT: $outTime",
+                                  workHours: workHrs,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
               ),
             ],
