@@ -116,12 +116,12 @@ class Layout extends StatelessWidget {
                 child: loginController.userImage != null
                     ? Image.memory(
                         base64Decode(loginController.userImage!.split(',')[1]),
-                        width: 100, // diameter
+                        width: 50, // diameter
                         height: 100,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fitHeight,
                       )
                     : Container(
-                        width: 100,
+                        width: 50,
                         height: 100,
                         color: Colors.grey[200],
                         child: Icon(Icons.person, size: 50),
@@ -339,10 +339,11 @@ class Layout extends StatelessWidget {
                       ),
                       MySpacing.width(8),
                       InkWell(
-                         onTap: () {
-                           toastMessage(message: "working");
-                         },
-                          child: MyText.labelMedium("Settings", fontWeight: 600)),
+                        onTap: () {
+                          toastMessage(message: "working");
+                        },
+                        child: MyText.labelMedium("Settings", fontWeight: 600),
+                      ),
                     ],
                   ),
                 ),

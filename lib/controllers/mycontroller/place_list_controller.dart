@@ -223,7 +223,7 @@ class PlaceListController extends GetxController {
 
     lastLat = lastRoute.latitude;
     lastLong = lastRoute.longitude;
-    double thresholdMeters = 10;
+    double thresholdMeters = 700;
 
     if (lastLat != null &&
         lastLong != null &&
