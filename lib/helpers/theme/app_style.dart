@@ -93,7 +93,7 @@ class AppTheme {
     dividerColor: Color(0xffdddddd),
 
     /// Bottom AppBar Theme
-    bottomAppBarTheme: const BottomAppBarThemeData(
+    bottomAppBarTheme: const BottomAppBarTheme(
       color: Color(0xffeeeeee),
       elevation: 2,
     ),
@@ -136,9 +136,9 @@ class AppTheme {
     ),
     switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) =>
-            states.contains(WidgetState.selected)
-                ? AppTheme.primaryColor
-                : Colors.white)),
+        states.contains(WidgetState.selected)
+            ? AppTheme.primaryColor
+            : Colors.white)),
 
     /// Other Colors
     splashColor: Colors.white.withAlpha(100),
@@ -147,6 +147,7 @@ class AppTheme {
 
   /// -------------------------- Dark Theme  -------------------------------------------- ///
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
+
     /// Brightness
 
     /// Scaffold and Background color
@@ -188,7 +189,7 @@ class AppTheme {
         foregroundColor: Colors.white),
 
     /// Bottom AppBar Theme
-    bottomAppBarTheme: const BottomAppBarThemeData(
+    bottomAppBarTheme: const BottomAppBarTheme(
       color: Color(0xffeeeeee),
       elevation: 2,
     ),
@@ -257,7 +258,7 @@ class AppStyle {
       cardRadius: AppStyle.cardRadius.medium,
       buttonRadius: AppStyle.buttonRadius.medium,
       defaultBreadCrumbItem:
-          MyBreadcrumbItem(name: 'Flatten', route: '/dashboard'),
+      MyBreadcrumbItem(name: 'Flatten', route: '/dashboard'),
     ));
     bool isMobile = true;
     try {
@@ -271,13 +272,13 @@ class AppStyle {
   /// -------------------------- Styles  -------------------------------------------- ///
 
   static MaterialRadius buttonRadius =
-      MaterialRadius(small: 2, medium: 4, large: 8);
+  MaterialRadius(small: 2, medium: 4, large: 8);
   static MaterialRadius cardRadius =
-      MaterialRadius(xs: 2, small: 4, medium: 4, large: 8);
+  MaterialRadius(xs: 2, small: 4, medium: 4, large: 8);
   static MaterialRadius containerRadius =
-      MaterialRadius(xs: 2, small: 4, medium: 4, large: 8);
+  MaterialRadius(xs: 2, small: 4, medium: 4, large: 8);
   static MaterialRadius imageRadius =
-      MaterialRadius(xs: 2, small: 4, medium: 4, large: 8);
+  MaterialRadius(xs: 2, small: 4, medium: 4, large: 8);
 }
 
 class AppColors {
@@ -294,15 +295,15 @@ class AppColors {
   static ColorGroup skyBlue = ColorGroup(Color(0xffC2F0FF), Color(0xff0099CC));
   static ColorGroup lavender = ColorGroup(Color(0xffEAE2F3), Color(0xff7748AD));
   static ColorGroup queenPink =
-      ColorGroup(Color(0xffE8D9DC), Color(0xff804D57));
+  ColorGroup(Color(0xffE8D9DC), Color(0xff804D57));
   static ColorGroup blueViolet =
-      ColorGroup(Color(0xffC5C6E7), Color(0xff3B3E91));
+  ColorGroup(Color(0xffC5C6E7), Color(0xff3B3E91));
   static ColorGroup rosePink = ColorGroup(Color(0xffFCB1E0), Color(0xffEC0999));
 
   static ColorGroup rubinRed = ColorGroup(Color(0x98f6a8bd), Color(0xffd03760));
   static ColorGroup favorite = rubinRed;
   static ColorGroup redOrange =
-      ColorGroup(Color(0xffFFAD99), Color(0xffF53100));
+  ColorGroup(Color(0xffFFAD99), Color(0xffF53100));
 
   static Color notificationSuccessBGColor = Color(0xff117E68);
   static Color notificationSuccessTextColor = Color(0xffffffff);
