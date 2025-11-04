@@ -66,7 +66,7 @@ class _FAQsPageState extends State<FAQsPage>
               Column(
                 children: [
                   Icon(
-                    LucideIcons.circle_help,
+                    LucideIcons.hand_helping,
                     size: 36,
                   ),
                   MySpacing.height(12),
