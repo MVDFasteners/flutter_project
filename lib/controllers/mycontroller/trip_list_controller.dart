@@ -15,7 +15,7 @@ class TripListController extends GetxController {
   List<Trip> travelLogs = [];
   Trip currentTrip = Trip();
   bool isFetchLoading = false;
-
+  List<TripEmployees> tripEmployees = [];
   bool isLoading = false;
 
   // bool hasMore = true;
@@ -234,65 +234,40 @@ class TripListController extends GetxController {
     update();
   }
 
-  // Future<void> fetchTripList({
-  //   String? company,
-  //   String? fromDate,
-  //   String? toDate,
-  //   String? employeeId,
-  //   int limitStart = 0,
-  //   int limitPageLength = 20,
-  //   String? name,
-  //   required String tripStatus,
-  // }) async {
-  //   if (AuthService.sessionId == null) {
-  //     print("❌ No session found. Please login first.");
-  //     return;
-  //   }
-  //   final url = Uri.parse("$backendUrl/get_trip_list");
-  //
-  //   final body = {
-  //     'cookie': AuthService.sessionId,
-  //     'company': company,
-  //     'from_date': fromDate,
-  //     'to_date': toDate,
-  //     'employee_id': employeeId,
-  //     'limit_start': limitStart,
-  //     'limit_page_length': limitPageLength,
-  //     'status': tripStatus == "All" ? null : tripStatus,
-  //     'name': name,
-  //   };
-  //
-  //   try {
-  //     final response = await http.post(
-  //       url,
-  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-  //       body: jsonEncode(body),
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       travelLogs = [];
-  //       final data = jsonDecode(response.body);
-  //       print("data $data");
-  //       final tripsJson = data['message'] as List<dynamic>? ?? [];
-  //
-  //       if (limitStart == 0) {
-  //         travelLogs.clear();
-  //       }
-  //
-  //       travelLogs.addAll(tripsJson.map((e) => Trip.fromJson(e)).toList());
-  //
-  //       offset += tripsJson.length;
-  //       hasMore = tripsJson.length == limitPageLength;
-  //       print("TravelLogs length = ${travelLogs.length} , ${travelLogs}");
-  //     } else {
-  //       print("❌ Error ${response.statusCode}: ${response.body}");
-  //     }
-  //   } catch (e) {
-  //     print("⚠️ Error: ${e.toString()}");
-  //   }
-  //   isLoading = false;
-  //   update();
-  // }
+  Future<void> fetchEmployeeListAll() async {
+    if (AuthService.sessionId == null) {
+      print("❌ No session found. Please login first.");
+      return;
+    }
+    final url = Uri.parse(
+      "http://208.115.124.12:8000/api/method/my_api_app.api_methods.hr_modules_api.get_employee_list_all",
+    );
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          " Cookie": AuthService.sessionId!, // frappe session id
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final employeeList = data["message"] as List<dynamic>? ?? [];
+        tripEmployees.clear();
+        tripEmployees.addAll(
+          employeeList.map((e) => TripEmployees.fromJson(e)).toList(),
+        );
+        print("✅ Employees fetched: ${tripEmployees.length}");
+      } else {
+        print("❌ Error ${response.statusCode}: ${response.body}");
+      }
+    } catch (e) {
+      print("⚠️ Error fetching employee list: $e");
+    }
+    isLoading = false;
+    update();
+  }
 
   void onSelectMonth(String value) async {
     selectedMonth = value;
@@ -621,7 +596,6 @@ class TripListController extends GetxController {
     if (childId == null || childId.isEmpty) {
       tripChildRoute = RoutePoint(
         parentId: parentId,
-        // parentType: parentType, // ✅ Required field
         address: address,
         distanceFromPreviousKm: 0,
         latitude: latitude,

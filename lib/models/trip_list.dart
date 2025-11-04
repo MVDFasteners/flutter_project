@@ -36,6 +36,35 @@ class TripImage {
   }
 }
 
+class TripEmployees {
+  String? id;
+  String? parentId;
+  String? employeeId;
+  String? employeeName;
+
+  TripEmployees({this.id, this.parentId, this.employeeId, this.employeeName});
+
+  factory TripEmployees.fromJson(Map<String, dynamic> json) {
+    return TripEmployees(
+      id: json['name'],
+      employeeId: json['employee'],
+      employeeName: json['employee_name'],
+      parentId: json['parent'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'parent': parentId,
+      'employee': employeeId,
+      'employee_name': employeeName,
+      "parenttype": "Employee Trip",
+      "parentfield": "add_employee_for_trip",
+    };
+  }
+}
+
 class RoutePoint {
   String? id;
   int? sequence;

@@ -15,6 +15,7 @@ import 'package:geolocator/geolocator.dart';
 class PlaceListController extends GetxController {
   Trip currentTrip = Trip();
   List<RoutePoint> tripRouteList = [];
+  List<TripEmployees> tripEmployees = [];
   TripListController tripListController = Get.put(TripListController());
   bool isFetchLoading = false;
 
@@ -47,6 +48,48 @@ class PlaceListController extends GetxController {
       update();
       return value;
     }
+  }
+
+  Future<List<TripEmployees>> fetchTripEmployees({
+    required String parentId,
+  }) async {
+    if (AuthService.sessionId == null) {
+      print("❌ No session found. Please login first.");
+      return [];
+    }
+
+    List<TripEmployees> list = [];
+
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_trip_employes",
+    );
+
+    final Map<String, dynamic> body = {"parent_id": parentId};
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          "Cookie": AuthService.sessionId!, // ✅ use ERPNext session
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final tripsJson = data['message'] as List<dynamic>? ?? [];
+        list.addAll(tripsJson.map((e) => TripEmployees.fromJson(e)).toList());
+        print("✅ Travel Employees fetched: ${tripRouteList.length}");
+      } else {
+        print("❌ Error ${response.statusCode}: ${response.body}");
+      }
+    } catch (e) {
+      print("⚠️ Error fetching travel routes: $e");
+    }
+
+    return list;
   }
 
   Future<void> fetchRoutesList({required String parentId}) async {

@@ -2,9 +2,11 @@ import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/mycontroller/place_list_controller.dart';
 import 'package:flatten/controllers/mycontroller/trip_images_controller.dart';
 import 'package:flatten/controllers/mycontroller/trip_list_controller.dart';
+import 'package:flatten/models/trip_list.dart';
 import 'package:flatten/myPages/locaiton_service.dart';
 import 'package:flatten/myPages/trip_images.dart';
 import 'package:flatten/views/layouts/layout.dart';
+import 'package:flatten/work%20space.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
@@ -19,8 +21,21 @@ class PlaceList extends StatelessWidget {
     final TripImagesController tripImagesController = Get.put(
       TripImagesController(),
     );
-
     return Layout(
+      anyWidget: GetBuilder<PlaceListController>(
+        builder: (controller) {
+          return IconButton(
+            onPressed: () async {
+              if (controller.currentTrip.name != null) {
+                List<TripEmployees> listValues = await controller
+                    .fetchTripEmployees(parentId: controller.currentTrip.name!);
+                await _listEmployeesTrip(context, employeeList: listValues);
+              }
+            },
+            icon: Icon(Icons.people, color: Colors.blue, size: 33),
+          );
+        },
+      ),
       leadingWidget: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
@@ -99,11 +114,12 @@ class PlaceList extends StatelessWidget {
                           ),
                           subtitle: Row(
                             children: [
-                              Text("${stop.distanceFromPreviousKm} km",style: TextStyle(color: Colors.red) ),
-                              Spacer(),
                               Text(
-                                '${value}'
+                                "${stop.distanceFromPreviousKm} km",
+                                style: TextStyle(color: Colors.red),
                               ),
+                              Spacer(),
+                              Text('${value}'),
                             ],
                           ),
                         ),
@@ -197,5 +213,41 @@ class PlaceList extends StatelessWidget {
               ),
       ),
     ];
+  }
+
+  Future<dynamic> _listEmployeesTrip(
+    context, {
+    required List<TripEmployees> employeeList,
+  }) async {
+    return showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text(
+            "Employees List",
+            style: TextStyle(color: Colors.red, fontSize: 25),
+          ),
+          content: employeeList.isEmpty
+              ? SizedBox(height: 100, child: Text("No Employees Found"))
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (TripEmployees value in employeeList)
+                      Card(
+                        margin: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            child: Text(
+                              '${value.employeeName!.substring(0, 1)}',
+                            ),
+                          ),
+                          title: Text(value.employeeName ?? "--"),
+                        ),
+                      ),
+                  ],
+                ),
+        );
+      },
+    );
   }
 }

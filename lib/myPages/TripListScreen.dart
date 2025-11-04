@@ -67,7 +67,9 @@ class _TripListScreenState extends State<TripListScreen>
       scrollNeed: false,
       anyWidget: IconButton(
         onPressed: () async {
-          await controller.fetchTripListWithFilters();
+
+          await controller.fetchEmployeeListAll();
+          // await controller.fetchTripListWithFilters();
         },
         icon: Icon(Icons.refresh),
       ),

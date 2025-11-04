@@ -78,6 +78,8 @@ class Layout extends StatelessWidget {
         leading: leadingWidget,
         elevation: 0,
         actions: [
+          if (anyWidget != null) anyWidget!,
+          if (anyWidget != null) SizedBox(width: 20),
           InkWell(
             onTap: () {
               ThemeCustomizer.setTheme(
@@ -301,9 +303,7 @@ class Layout extends StatelessWidget {
   }
 
   Widget buildAccountMenu(context) {
-    return
-
-      Container();
+    return Container();
     //   MyContainer.bordered(
     //   paddingAll: 0,
     //   width: 150,
