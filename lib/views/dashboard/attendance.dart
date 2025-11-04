@@ -27,6 +27,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
+import 'package:marquee/marquee.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 import 'package:flatten/controllers/mycontroller/attendance_controller.dart';
@@ -400,12 +401,27 @@ class _AttendanceState extends State<Attendance>
               Icon(Icons.location_on),
               SizedBox(
                 width: 200,
-                child: MyText.bodyMedium(
-                  location,
-                  fontWeight: 600,
-                  overflow: TextOverflow.ellipsis,
+                height: 25,
+                child: Marquee(
+                  text: location,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                    fontSize: 16,
+                  ),
+                  blankSpace: 50.0,
+                  // space between repeats
+                  velocity: 40.0,
+                  // speed
+                  pauseAfterRound: Duration(seconds: 1),
+                  startPadding: 10.0,
+                  accelerationDuration: Duration(seconds: 1),
+                  accelerationCurve: Curves.linear,
+                  decelerationDuration: Duration(milliseconds: 500),
+                  decelerationCurve: Curves.easeOut,
                 ),
               ),
+
               Spacer(),
               MyContainer(
                 paddingAll: 8,
