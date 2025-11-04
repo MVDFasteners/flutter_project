@@ -66,7 +66,7 @@ class LocationService {
         List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
         if (placemarks.isNotEmpty) {
           final place = placemarks.first;
-          return "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+          return "${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
         } else {
           return "No address found";
         }
