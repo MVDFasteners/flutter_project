@@ -20,6 +20,12 @@ class TripImages extends StatelessWidget {
   Widget build(BuildContext context) {
     CameraControllerNew cameraControllerNew = Get.put(CameraControllerNew());
     return Layout(
+      leadingWidget: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back),
+      ),
       floatingAction: GetBuilder<TripImagesController>(
         builder: (controller) {
           return FloatingActionButton(
