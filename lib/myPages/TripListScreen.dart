@@ -67,7 +67,6 @@ class _TripListScreenState extends State<TripListScreen>
       scrollNeed: false,
       anyWidget: IconButton(
         onPressed: () async {
-
           await controller.fetchEmployeeListAll();
           // await controller.fetchTripListWithFilters();
         },
@@ -298,7 +297,9 @@ class _TripListScreenState extends State<TripListScreen>
                 await controller.saveTripParent();
                 Navigator.pop(context);
               },
-              child: const Text("Get Start", style: TextStyle(fontSize: 16)),
+              child: controller.getStartLoad
+                  ? CircularProgressIndicator()
+                  : const Text("Get Start", style: TextStyle(fontSize: 16)),
             ),
           ],
         );

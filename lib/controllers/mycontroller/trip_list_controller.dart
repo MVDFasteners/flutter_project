@@ -17,6 +17,7 @@ class TripListController extends GetxController {
   bool isFetchLoading = false;
   List<TripEmployees> tripEmployees = [];
   bool isLoading = false;
+  bool getStartLoad = false;
 
   // bool hasMore = true;
   // int limit = 20;
@@ -331,6 +332,8 @@ class TripListController extends GetxController {
   }
 
   Future<void> saveTripParent({Trip? trip}) async {
+    getStartLoad = true;
+    update();
     final String finalTime = DateFormat(
       'dd-MM-yyyy HH:mm:ss',
     ).format(DateTime.now());
@@ -400,13 +403,16 @@ class TripListController extends GetxController {
         } else {
           print("⚠️ Unexpected Response: $data");
         }
+
+        getStartLoad = false;
+        update();
       } else {
         print("❌ Error ${response.statusCode}: ${response.body}");
       }
     } catch (e) {
       print("⚠️ Exception: $e");
     }
-
+    getStartLoad = false;
     update();
   }
 
