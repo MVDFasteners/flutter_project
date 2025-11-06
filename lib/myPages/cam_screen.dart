@@ -134,12 +134,13 @@ class _CameraPageNewState extends State<CameraPageNew>
                         bool? created;
 
                         final value = await _capturePhoto(context);
-
+                        showCustomToast("Photo Captured Success...", context);
                         if (value != null) {
                           created = await attendanceController
                               .saveLoginEntryDirect(
                                 fileName: value['fileName'],
                                 compressedBytes: value['compressedBytes'],
+                                context: context,
                               );
                         }
 

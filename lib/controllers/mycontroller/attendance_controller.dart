@@ -340,6 +340,7 @@ class AttendanceController extends MyController {
   Future<bool?> saveLoginEntryDirect({
     required Uint8List compressedBytes,
     required String fileName,
+    required BuildContext context,
   }) async {
     DateTime now = DateTime.now();
     String currentDate = DateFormat('yyyy-MM-dd').format(now);
@@ -352,7 +353,7 @@ class AttendanceController extends MyController {
     } else {
       newLogin = employeeLoginList.first;
     }
-
+    showCustomToast("Location Capturing....", context);
     Position? position = await LocationService().getCurrentPosition();
     String address = "----";
 
@@ -361,7 +362,7 @@ class AttendanceController extends MyController {
       double long = position.longitude;
       address = await LocationService().getAddressFromLatLng(lat, long);
     }
-
+    showCustomToast("Location Captured Success....", context);
     if (loginStatusCurrent == "IN") {
       newLogin = EmployeeLogin(
         employee: loginCtrl.userModel.employeeId,
@@ -405,7 +406,7 @@ class AttendanceController extends MyController {
       print("❌ No session found. Please login first.");
       return null;
     }
-
+    showCustomToast("Almost Done....", context);
     // 🔹 Direct ERPNext API endpoint
     final apiUrl =
         "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.save_login_entry";
@@ -785,11 +786,16 @@ class AttendanceController extends MyController {
     int month = today.month;
     int date = today.day;
     List<String> completedDates = [];
+
     for (int day = 1; day <= date; day++) {
-      completedDates.add("$year-$month-$day");
+      // ✅ Always use 2-digit month and day
+      String formattedDate =
+          "${year.toString()}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
+      completedDates.add(formattedDate);
     }
+
     print("Days completed in month: ${completedDates.length}");
-    print("List of completed dates:");
+    print("List of completed dates: $completedDates");
     return completedDates;
   }
 }

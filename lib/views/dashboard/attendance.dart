@@ -93,7 +93,7 @@ class _AttendanceState extends State<Attendance>
               );
               print(value);
               if (value ?? false) {
-                showCustomToast("Login Successful!", context);
+                showCustomToast("Punched Successful!", context);
               } else {
                 showCustomToast("Not Punched!", context);
               }
