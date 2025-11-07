@@ -62,6 +62,25 @@ Map<String, int> monthMap = {
   'Dec': 12,
 };
 
+List<String> completedDateListPerMonth() {
+  DateTime today = DateTime.now();
+  int year = today.year;
+  int month = today.month;
+  int date = today.day;
+  List<String> completedDates = [];
+
+  for (int day = 1; day <= date; day++) {
+    // ✅ Always use 2-digit month and day
+    String formattedDate =
+        "${year.toString()}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
+    completedDates.add(formattedDate);
+  }
+
+  print("Days completed in month: ${completedDates.length}");
+  print("List of completed dates: $completedDates");
+  return completedDates;
+}
+
 Map<String, int> calculateWorkHours(String startTime, String endTime) {
   // if(startTime =)
   if (startTime == null ||
@@ -88,6 +107,12 @@ String calculateTime(String? time) {
 
   final DateFormat outputFormat = DateFormat('dd MMM yy hh:mm a');
   return outputFormat.format(dateTime);
+}
+
+String timeStringToStringWithAmPM({required String railwayTime}) {
+  DateTime parsedTime = DateFormat("HH:mm:ss").parse(railwayTime);
+  String formattedTime = DateFormat("hh:mm a").format(parsedTime);
+  return formattedTime;
 }
 
 class AppConstant {

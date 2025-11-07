@@ -747,10 +747,13 @@ class AttendanceController extends MyController {
     Set absentDaysSetN = notPunchedList.difference(leaveDates);
 
     print(absentDaysSetN);
-    absentDaysSetN.toList();
+      absentDaysSetN.toList();
     absentDays = absentDaysSetN.length;
     presentDays = leaveList.length;
     for (EmployeeLogin log in loginList) {
+      if (leaveDates.contains(log.inDate)) {
+        continue;
+      }
       // check half days..................
       if (log.inTime != null && log.outTime == null || log.outTime == "") {
         halfDays++;
@@ -778,24 +781,5 @@ class AttendanceController extends MyController {
     print("absentDays: $absentDays");
     print("halfDays: $halfDays");
     print("permissionDays: $permissionsDays");
-  }
-
-  List<String> completedDateListPerMonth() {
-    DateTime today = DateTime.now();
-    int year = today.year;
-    int month = today.month;
-    int date = today.day;
-    List<String> completedDates = [];
-
-    for (int day = 1; day <= date; day++) {
-      // ✅ Always use 2-digit month and day
-      String formattedDate =
-          "${year.toString()}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
-      completedDates.add(formattedDate);
-    }
-
-    print("Days completed in month: ${completedDates.length}");
-    print("List of completed dates: $completedDates");
-    return completedDates;
   }
 }

@@ -6,6 +6,7 @@ import 'package:flatten/helpers/services/storage/local_storage.dart';
 import 'package:flatten/helpers/theme/app_notifier.dart';
 import 'package:flatten/helpers/theme/app_style.dart';
 import 'package:flatten/helpers/theme/theme_customizer.dart';
+import 'package:flatten/responsive.dart';
 import 'package:flatten/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -72,7 +73,9 @@ class _MyAppState extends State<MyApp> {
           darkTheme: AppTheme.darkTheme,
           themeMode: ThemeCustomizer.instance.theme,
           navigatorKey: NavigationService.navigatorKey,
-          initialRoute: "/",
+          initialRoute: Responsive.isDesktop(context)
+              ? "/per_day_login_report"
+              : "/",
           getPages: getPageRoute(),
           // onGenerateRoute: (_) => generateRoute(context, _),
           builder: (context, child) {

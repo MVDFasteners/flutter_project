@@ -12,6 +12,7 @@ import 'package:flatten/helpers/widgets/my_container.dart';
 import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/images.dart';
+import 'package:flatten/responsive.dart';
 import 'package:flatten/widgets/custom_pop_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_instance/get_instance.dart';
@@ -77,7 +78,8 @@ class _LeftBarState extends State<LeftBar>
           ),
           child: AnimatedContainer(
             color: leftBarTheme.background,
-            width: isCondensed ? 70 : 244,
+            width: 70,
+            // isCondensed ? 70 : 180,
             curve: Curves.easeInOut,
             duration: Duration(milliseconds: 200),
             child: Column(
@@ -97,25 +99,25 @@ class _LeftBarState extends State<LeftBar>
                           height: widget.isCondensed ? 24 : 32,
                         ),
                       ),
-                      if (!widget.isCondensed)
-                        Flexible(
-                          fit: FlexFit.loose,
-                          child: MySpacing.width(16),
-                        ),
-                      if (!widget.isCondensed)
-                        Flexible(
-                          fit: FlexFit.loose,
-                          child: MyText.labelLarge(
-                            "MVD",
-                            style: GoogleFonts.raleway(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w800,
-                              color: contentTheme.primary,
-                              letterSpacing: 1,
-                            ),
-                            maxLines: 1,
-                          ),
-                        ),
+                      // if (!widget.isCondensed)
+                      //   Flexible(
+                      //     fit: FlexFit.loose,
+                      //     child: MySpacing.width(16),
+                      //   ),
+                      // if (!widget.isCondensed)
+                      //   Flexible(
+                      //     fit: FlexFit.loose,
+                      //     child: MyText.labelLarge(
+                      //       "MVD",
+                      //       style: GoogleFonts.raleway(
+                      //         fontSize: 28,
+                      //         fontWeight: FontWeight.w800,
+                      //         color: contentTheme.primary,
+                      //         letterSpacing: 1,
+                      //       ),
+                      //       maxLines: 1,
+                      //     ),
+                      //   ),
                     ],
                   ),
                 ),
@@ -124,46 +126,44 @@ class _LeftBarState extends State<LeftBar>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        NavigationItem(
-                          iconData: Icons.home,
-                          title: "home".tr(),
-                          isCondensed: isCondensed,
-                          route: '/default',
-                        ),
+                        if (Responsive.isMobile(context))
+                          NavigationItem(
+                            iconData: Icons.home,
+                            title: "home".tr(),
+                            isCondensed: true,
+                            route: '/default',
+                          ),
+                        if (Responsive.isMobile(context))
+                          NavigationItem(
+                            iconData: Icons.group,
+                            title: "Attendance".tr(),
+                            isCondensed: isCondensed,
+                            route: '/attendance',
+                          ),
 
-                        // NavigationItem(
-                        //   iconData: LucideIcons.layout_dashboard,
-                        //   title: "dashboard".tr(),
-                        //   isCondensed: isCondensed,
-                        //   route: '/dashboard',
-                        // ),
+                        if (Responsive.isMobile(context))
+                          NavigationItem(
+                            iconData: Icons.route,
+                            title: "Trip List".tr(),
+                            isCondensed: isCondensed,
+                            route: '/trip_list',
+                          ),
 
-                        // NavigationItem(
-                        //   iconData: Icons.store,
-                        //   title: "stock".tr(),
-                        //   isCondensed: isCondensed,
-                        //   route: '/stock',
-                        // ),
+                        if (Responsive.isDesktop(context))
+                          NavigationItem(
+                            iconData: Icons.report,
+                            title: "Login Report".tr(),
+                            isCondensed: isCondensed,
+                            route: '/per_day_login_report',
+                          ),
 
-                        // NavigationItem(
-                        //   iconData: Icons.payment,
-                        //   title: "Accounts".tr(),
-                        //   isCondensed: isCondensed,
-                        //   route: '/accounts',
-                        // ),
-                        NavigationItem(
-                          iconData: Icons.group,
-                          title: "Attendance".tr(),
-                          isCondensed: isCondensed,
-                          route: '/attendance',
-                        ),
-
-                        NavigationItem(
-                          iconData: Icons.route,
-                          title: "Trip List".tr(),
-                          isCondensed: isCondensed,
-                          route: '/trip_list',
-                        ),
+                        if (Responsive.isDesktop(context))
+                          NavigationItem(
+                            iconData: Icons.groups,
+                            title: "Monthly Login Report".tr(),
+                            isCondensed: isCondensed,
+                            route: '/monthly_hr_report',
+                          ),
 
                         //
                         // NavigationItem(

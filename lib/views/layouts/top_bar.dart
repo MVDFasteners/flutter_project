@@ -127,42 +127,42 @@ class _TopBarState extends State<TopBar>
                         color: topBarTheme.onBackground,
                       ),
                     ),
-                    MySpacing.width(12),
-                    CustomPopupMenu(
-                      backdrop: true,
-                      hideFn: (hide) => languageHideFn = hide,
-                      onChange: (_) {},
-                      offsetX: -36,
-                      menu: Padding(
-                        padding: MySpacing.xy(8, 8),
-                        child: Center(
-                          child: ClipRRect(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            borderRadius: BorderRadius.circular(2),
-
-                            child: Image.asset(
-                              'assets/lang/${ThemeCustomizer.instance.currentLanguage.locale.languageCode}.jpg',
-                              width: 24,
-                              height: 18,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      menuBuilder: (_) =>
-                          buildLanguageSelector(controller.userModel),
-                    ),
-                    MySpacing.width(6),
-                    CustomPopupMenu(
-                      backdrop: true,
-                      onChange: (_) {},
-                      offsetX: -120,
-                      menu: Padding(
-                        padding: MySpacing.xy(8, 8),
-                        child: Center(child: Icon(LucideIcons.bell, size: 18)),
-                      ),
-                      menuBuilder: (_) => buildNotifications(),
-                    ),
+                    // MySpacing.width(12),
+                    // CustomPopupMenu(
+                    //   backdrop: true,
+                    //   hideFn: (hide) => languageHideFn = hide,
+                    //   onChange: (_) {},
+                    //   offsetX: -36,
+                    //   menu: Padding(
+                    //     padding: MySpacing.xy(8, 8),
+                    //     child: Center(
+                    //       child: ClipRRect(
+                    //         clipBehavior: Clip.antiAliasWithSaveLayer,
+                    //         borderRadius: BorderRadius.circular(2),
+                    //
+                    //         child: Image.asset(
+                    //           'assets/lang/${ThemeCustomizer.instance.currentLanguage.locale.languageCode}.jpg',
+                    //           width: 24,
+                    //           height: 18,
+                    //           fit: BoxFit.cover,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    //   menuBuilder: (_) =>
+                    //       buildLanguageSelector(controller.userModel),
+                    // ),
+                    // MySpacing.width(6),
+                    // CustomPopupMenu(
+                    //   backdrop: true,
+                    //   onChange: (_) {},
+                    //   offsetX: -120,
+                    //   menu: Padding(
+                    //     padding: MySpacing.xy(8, 8),
+                    //     child: Center(child: Icon(LucideIcons.bell, size: 18)),
+                    //   ),
+                    //   menuBuilder: (_) => buildNotifications(),
+                    // ),
                     MySpacing.width(4),
                     CustomPopupMenu(
                       backdrop: true,
@@ -241,16 +241,14 @@ class _TopBarState extends State<TopBar>
                     ClipRRect(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       borderRadius: BorderRadius.circular(2),
-                      child:
-                      user.image != null
+                      child: user.image != null
                           ? CircleAvatar(
                               radius: 50,
                               backgroundImage: NetworkImage(
                                 "http://192.168.1.143:8000${user.image!}",
                               ),
                             )
-                          :
-                      const CircleAvatar(
+                          : const CircleAvatar(
                               radius: 50,
                               child: Icon(Icons.person, size: 50),
                             ),
