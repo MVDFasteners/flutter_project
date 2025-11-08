@@ -93,7 +93,7 @@ class AppTheme {
     dividerColor: Color(0xffdddddd),
 
     /// Bottom AppBar Theme
-    bottomAppBarTheme: const BottomAppBarTheme(
+    bottomAppBarTheme: const BottomAppBarThemeData(
       color: Color(0xffeeeeee),
       elevation: 2,
     ),
@@ -189,7 +189,7 @@ class AppTheme {
         foregroundColor: Colors.white),
 
     /// Bottom AppBar Theme
-    bottomAppBarTheme: const BottomAppBarTheme(
+    bottomAppBarTheme: const BottomAppBarThemeData(
       color: Color(0xffeeeeee),
       elevation: 2,
     ),
@@ -251,7 +251,7 @@ class AppStyle {
 
   static void initMyStyle() {
     MyTextStyle.resetFontStyles();
-    MyTextStyle.changeFontFamily(GoogleFonts.poppins);
+    // MyTextStyle.changeFontFamily(GoogleFonts.poppins);
     My.changeTheme(AppTheme.theme);
     My.setConstant(MyConstantData(
       containerRadius: AppStyle.containerRadius.medium,
