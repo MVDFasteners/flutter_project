@@ -50,15 +50,16 @@ android {
 
     buildTypes {
         release {
-            // Enable code shrinking, obfuscation, and resource shrinking
+            // ✅ Use your release keystore (not debug)
+            signingConfig signingConfigs.release
+
+            // Enable optimizations
             minifyEnabled true
             shrinkResources true
 
-            // Use the default ProGuard configuration file + your own rules
+            // Optional: code obfuscation rules
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
-
-            signingConfig = signingConfigs.debug
         }
     }
 }
