@@ -5,6 +5,7 @@ import 'package:flatten/myPages/lead_screen.dart';
 import 'package:flatten/myPages/login_new_screen.dart';
 import 'package:flatten/myPages/reports/monthly_login_details.dart';
 import 'package:flatten/myPages/reports/one_day_login_details.dart';
+import 'package:flatten/myPages/reports/pdf_formate.dart';
 import 'package:flatten/responsive.dart';
 import 'package:flatten/views/apps/chat/chats_page.dart';
 import 'package:flatten/views/apps/ecommerce/add_product.dart';
@@ -126,6 +127,12 @@ List<GetPage> getPageRoute() {
     GetPage(
       name: '/per_day_login_report',
       page: () => PerDayLogin(),
+      middlewares: [AuthMiddleware()],
+    ),
+
+    GetPage(
+      name: '/attendance_pdf',
+      page: () => AttendancePdfFormat(),
       middlewares: [AuthMiddleware()],
     ),
 

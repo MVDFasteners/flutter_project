@@ -11,10 +11,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:windows_toast/windows_toast.dart';
 
 class HRReportController extends MyController {
   List<ReportEmployeesLoginList> reportEmployeesLoginList = [];
   List<ReportEmployeesLoginList> allEmployeeLoginList = [];
+
+  List<ReportEmployeesLoginList> selectedEmployees = [];
+
+  bool isSelectMode = false;
 
   DateTime dateTime = DateTime.now();
   String currentCompany = "MVD FASTENERS PRIVATE LIMITED";
@@ -415,6 +420,54 @@ class HRReportController extends MyController {
     update();
   }
 
+  Future<int> deleteEmployeeLog() async {
+    int deletedCount = 0;
+    if (AuthService.sessionId == null) {
+      print("❌ No session found. Please login first.");
+      return deletedCount;
+    }
+
+    if (selectedEmployees.isNotEmpty) {
+      for (ReportEmployeesLoginList log in selectedEmployees) {
+        final apiUrl =
+            "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.delete_login_entry";
+
+        try {
+          final response = await http.post(
+            Uri.parse(apiUrl),
+            headers: {
+              HttpHeaders.contentTypeHeader: 'application/json',
+              'Cookie': AuthService.sessionId!, // use ERPNext session cookie
+            },
+            body: jsonEncode({'name': log.loginId}),
+          );
+
+          if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            print("✅ Deleted successfully: $data");
+
+            var status = data['message']?['status'];
+            if (status == "deleted") {
+              deletedCount++;
+            }
+          }
+        } catch (e) {
+          print("⚠️ Error saving login: $e");
+        }
+      }
+      update();
+      await fetchLoginListOneDay(
+        fromDate: dateController.value.text,
+        toDate: dateController.value.text,
+        company: currentCompany,
+        employeeName: employeeNameCtrl.value.text,
+      );
+      await onSelectStatus();
+      return deletedCount;
+    }
+    return deletedCount;
+  }
+
   Future<void> fetchCompanyList() async {
     if (AuthService.sessionId == null) {
       print("❌ No session found. Please login first.");
@@ -486,6 +539,10 @@ class HRReportController extends MyController {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: selectedEmployeesWidget(),
+                  ),
                   Row(
                     children: [
                       Text(
@@ -677,6 +734,7 @@ class HRReportController extends MyController {
                       await fetchLoginListMonthly(
                         company: currentCompany,
                         employeeName: employeeNameMonthCtrl.text,
+
                         fromDate: dateFilter['fromDate'],
                         toDate: dateFilter['toDate'],
                       );
@@ -700,6 +758,215 @@ class HRReportController extends MyController {
         );
       },
     );
+  }
+
+  Future<void> showEditMultipleLoginDialog(BuildContext context) async {
+    final TextEditingController inTimeCtrl = TextEditingController();
+    final TextEditingController outTimeCtrl = TextEditingController();
+    final TextEditingController remarks = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: const Text("Edit Attendance"),
+          content: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: selectedEmployeesWidget(),
+                  ),
+                  Text(
+                    dateController.value.text,
+                    style: const TextStyle(fontSize: 12, color: Colors.red),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          readOnly: true,
+                          controller: inTimeCtrl,
+                          decoration: const InputDecoration(
+                            labelText: "In Time",
+                            prefixIcon: Icon(Icons.access_time),
+                            border: OutlineInputBorder(),
+                          ),
+                          onTap: () async {
+                            final TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                              builder: (context, child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(
+                                    context,
+                                  ).copyWith(alwaysUse24HourFormat: false),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            if (pickedTime != null) {
+                              String time = pickedTime.format(context);
+                              inTimeCtrl.text = "$time:00";
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: TextFormField(
+                          readOnly: true,
+                          controller: outTimeCtrl,
+                          decoration: const InputDecoration(
+                            labelText: "Out Time",
+                            prefixIcon: Icon(Icons.access_time_filled),
+                            border: OutlineInputBorder(),
+                          ),
+                          onTap: () async {
+                            final TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                              builder: (context, child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(
+                                    context,
+                                  ).copyWith(alwaysUse24HourFormat: false),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            if (pickedTime != null) {
+                              String time = pickedTime.format(context);
+                              outTimeCtrl.text = "$time:00";
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: remarks,
+                    decoration: const InputDecoration(
+                      labelText: "Remarks",
+                      prefixIcon: Icon(Icons.note_alt),
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+
+            ElevatedButton.icon(
+              onPressed: () async {
+                print("In Time: ${inTimeCtrl.text}");
+                print("Out Time: ${outTimeCtrl.text}");
+                print("Remarks: ${remarks.text}");
+                print("Date: ${dateController.value.text}");
+
+                int successCount = await onMultipleSave(
+                  inTimeCtrl.text,
+                  outTimeCtrl.text,
+                  dateController.value.text,
+                  remarks.text,
+                );
+                if (successCount != 0) {
+                  WindowsToast.show(
+                    'Edited for $successCount',
+                    context,
+                    30,
+                    textStyle: const TextStyle(color: Colors.white),
+                  );
+                }
+                successCount = 0;
+                selectedEmployees.clear();
+                await fetchLoginListOneDay(
+                  fromDate: dateController.value.text,
+                  toDate: dateController.value.text,
+                  company: currentCompany,
+                  employeeName: employeeNameCtrl.value.text,
+                );
+                await onSelectStatus();
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.save),
+              label: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<int> onMultipleSave(
+    String inTime,
+    String outTime,
+    String inDate,
+    String remarks,
+  ) async {
+    int successCount = 0;
+    if (selectedEmployees.isNotEmpty) {
+      for (ReportEmployeesLoginList log in selectedEmployees) {
+        log.inTime = inTime;
+        log.outTime = outTime;
+        log.remarks = remarks;
+        log.inDate = inDate;
+        log.outDate = inDate;
+        log.inLocation = "HR Edits";
+        log.outLocation = "HR Edits";
+
+        bool? value = await saveLoginEntryDirect(log: log);
+        if (value ?? false) {
+          successCount++;
+        }
+        print(value);
+      }
+      return successCount;
+    }
+    return successCount;
+  }
+
+  List<Widget> selectedEmployeesWidget() {
+    List<Widget> selected = [];
+
+    for (int i = 0; i < selectedEmployees.length; i++) {
+      ReportEmployeesLoginList data = selectedEmployees[i];
+
+      selected.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            children: [
+              const Icon(Icons.person, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                data.employeeName ?? "",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return selected;
   }
 
   String padTime(String time) {
@@ -754,7 +1021,6 @@ class HRReportController extends MyController {
     absentDays = absentDaysSetN.length;
     presentDays = leaveEvents.length;
     for (ReportEmployeesLoginListMonthly log in employeeDetail.logList) {
-
       if (leaveDates.contains(log.inDate)) {
         continue;
       }

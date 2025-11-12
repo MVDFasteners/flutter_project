@@ -71,6 +71,9 @@ dependencies:
   flutter_image_compress: ^2.4.0
   flutter_launcher_icons: ^0.14.4
   marquee: ^2.3.0
+  printing: ^5.14.2
+  pdf: ^3.11.3
+  windows_toast: ^0.0.3
 
 
 dev_dependencies:

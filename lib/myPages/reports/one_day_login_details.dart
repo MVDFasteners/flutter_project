@@ -19,12 +19,15 @@ import 'package:flatten/images.dart';
 import 'package:flatten/models/attendance.dart';
 import 'package:flatten/models/chart_model.dart';
 import 'package:flatten/models/task_list_model.dart';
+import 'package:flatten/myPages/reports/pdf_formate.dart';
 import 'package:flatten/views/layouts/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flatten/app_constant.dart';
+import 'package:windows_toast/windows_toast.dart';
 
 class PerDayLogin extends StatefulWidget {
   const PerDayLogin({super.key});
@@ -44,7 +47,6 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
 
   void _initialFetch() async {
     await controller.fetchCompanyList();
-
     await controller.fetchLoginListOneDay(
       company: controller.currentCompany,
       fromDate: controller.dateController.value.text,
@@ -56,6 +58,55 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
   @override
   Widget build(BuildContext context) {
     return Layout(
+      anyWidget: GetBuilder(
+        init: controller,
+        tag: 'button',
+        builder: (controller) {
+          return Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => AttendancePdfFormat(),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.print),
+              ),
+
+              TextButton.icon(
+                label: Text("Selected: ${controller.selectedEmployees.length}"),
+                onPressed: () {
+                  controller.selectedEmployees.clear();
+                  controller.update();
+                },
+                icon: Icon(Icons.clear),
+              ),
+              TextButton.icon(
+                label: Text("Edit"),
+                onPressed: () async {
+                  if (controller.selectedEmployees.isNotEmpty) {
+                    await controller.showEditMultipleLoginDialog(context);
+                  }
+                },
+                icon: Icon(Icons.edit),
+              ),
+              TextButton.icon(
+                label: Text("Make Delete", style: TextStyle(color: Colors.red)),
+                onPressed: () async {
+                  if (controller.selectedEmployees.isNotEmpty) {
+                    await showDeleteConfirmationDialog(context);
+                  }
+                },
+                icon: Icon(Icons.delete, color: Colors.red),
+              ),
+            ],
+          );
+        },
+      ),
+
       child: GetBuilder(
         init: controller,
         tag: 'hr_report',
@@ -304,32 +355,49 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                   workHrs = "$hours Hrs $minutes Min";
                 }
                 return DataRow(
+                  onLongPress: () {
+                    controller.selectedEmployees.add(data);
+                    controller.update();
+                  },
                   onSelectChanged: (selected) async {
-                    if (selected ?? false) {
-                      controller.inImage = null;
-                      controller.outImage = null;
-                      if (data.inPhoto != null && data.inPhoto != '') {
-                        await controller.fetchImageBase64(
-                          data.inPhoto!,
-                          inPhoto: true,
+                    if (controller.selectedEmployees.isEmpty) {
+                      print("selected = $selected");
+                      if (selected ?? false) {
+                        controller.inImage = null;
+                        controller.outImage = null;
+                        if (data.inPhoto != null && data.inPhoto != '') {
+                          await controller.fetchImageBase64(
+                            data.inPhoto!,
+                            inPhoto: true,
+                          );
+                        }
+                        if (data.outPhoto != null && data.outPhoto != '') {
+                          await controller.fetchImageBase64(
+                            data.outPhoto!,
+                            inPhoto: false,
+                          );
+                        }
+                        await controller.showEditLoginDialog(
+                          context,
+                          data,
+                          contentTheme.primary,
+                          false,
+                          controller.dateController.value.text,
                         );
+                        print("Tapped: ${data.employeeName}");
                       }
-                      if (data.outPhoto != null && data.outPhoto != '') {
-                        await controller.fetchImageBase64(
-                          data.outPhoto!,
-                          inPhoto: false,
-                        );
+                    } else {
+                      if (controller.selectedEmployees.contains(data)) {
+                        controller.selectedEmployees.remove(data);
+                      } else {
+                        controller.selectedEmployees.add(data);
                       }
-                      await controller.showEditLoginDialog(
-                        context,
-                        data,
-                        contentTheme.primary,
-                        false,
-                        controller.dateController.value.text,
-                      );
-                      print("Tapped: ${data.employeeName}");
+
+                      controller.update();
+                      print("lenght = ${controller.selectedEmployees.length}");
                     }
                   },
+                  selected: controller.selectedEmployees.contains(data),
                   cells: [
                     DataCell(
                       MyText.bodyMedium(
@@ -668,6 +736,44 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
               },
               icon: const Icon(Icons.save),
               label: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showDeleteConfirmationDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirm Delete"),
+          content: const Text("Are you sure you want to delete this entry?"),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // close dialog
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () async {
+                int value = await controller.deleteEmployeeLog();
+                Navigator.pop(context);
+                controller.selectedEmployees.clear();
+                if (value != 0) {
+                  WindowsToast.show(
+                    'Deleted $value Records',
+                    context,
+                    30,
+                    textStyle: const TextStyle(color: Colors.white),
+                  );
+                }
+              },
+              child: const Text("Delete"),
             ),
           ],
         );

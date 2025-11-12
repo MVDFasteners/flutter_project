@@ -10,6 +10,7 @@ import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/models/attendance.dart';
 import 'package:flatten/models/monthly%20attendance%20model.dart';
+import 'package:flatten/myPages/reports/pdf_formate.dart';
 import 'package:flatten/views/layouts/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -186,7 +187,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                           .calculatePresentDetails(employee);
 
                       if (presentStatus != null) {
-                        await showLogInformation(presentStatus);
+                        await showLogInformation(presentStatus, employee);
                       }
                     },
                     Text(
@@ -484,11 +485,15 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
     );
   }
 
-  Future<void> showLogInformation(Map<String, int> status) async {
+  Future<void> showLogInformation(
+    Map<String, int> status,
+    EmployeeAttendance employee,
+  ) async {
     int presentDays = status['presentDays'] ?? 0;
     int absentDays = status['absentDays'] ?? 0;
     int halfDays = status['halfDays'] ?? 0;
     int permissionsDays = status['permissionsDays'] ?? 0;
+    String name = employee.employeeName ?? "---";
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -508,6 +513,8 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      Text("$name"),
+                      SizedBox(height: 8),
                       Text(
                         "Present Days : ",
                         style: TextStyle(
@@ -581,6 +588,20 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
               ),
             ),
           ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute<void>(
+                //     builder: (context) =>
+                //         AttendancePdfFormat(monthlyLogList: employee.logList),
+                //   ),
+                // );
+              },
+              child: Text("PDF Records"),
+            ),
+          ],
         );
       },
     );
