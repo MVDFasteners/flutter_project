@@ -1,11 +1,13 @@
 import 'package:flatten/helpers/services/auth_service.dart';
 import 'package:flatten/myPages/Home%20Page.dart';
 import 'package:flatten/myPages/TripListScreen.dart';
+import 'package:flatten/myPages/Warehouse%20View/store%20view.dart';
 import 'package:flatten/myPages/lead_screen.dart';
 import 'package:flatten/myPages/login_new_screen.dart';
 import 'package:flatten/myPages/reports/monthly_login_details.dart';
 import 'package:flatten/myPages/reports/one_day_login_details.dart';
 import 'package:flatten/myPages/reports/pdf_formate.dart';
+import 'package:flatten/myPages/Warehouse%20View/warehouse%20view.dart';
 import 'package:flatten/responsive.dart';
 import 'package:flatten/views/apps/chat/chats_page.dart';
 import 'package:flatten/views/apps/ecommerce/add_product.dart';
@@ -38,7 +40,7 @@ import 'package:flatten/views/other/basic_table.dart';
 import 'package:flatten/views/other/fl_chart_screen.dart';
 import 'package:flatten/views/other/google_map.dart';
 import 'package:flatten/views/other/syncfusion_charts.dart';
-import 'package:flatten/views/pages/view_login_details.dart';
+import 'package:flatten/myPages/view_login_details.dart';
 import 'package:flatten/views/starter.dart';
 import 'package:flatten/views/pages/coming_soon_page.dart';
 import 'package:flatten/views/pages/error_404_cover.dart';
@@ -127,6 +129,12 @@ List<GetPage> getPageRoute() {
     GetPage(
       name: '/per_day_login_report',
       page: () => PerDayLogin(),
+      middlewares: [AuthMiddleware()],
+    ),
+
+    GetPage(
+      name: '/warehouse_view',
+      page: () => StoreWisePage(),
       middlewares: [AuthMiddleware()],
     ),
 
@@ -229,11 +237,11 @@ List<GetPage> getPageRoute() {
       page: () => ReviewsPage(),
       middlewares: [AuthMiddleware()],
     ),
-    GetPage(
-      name: '/apps/ecommerce/invoice',
-      page: () => InvoicePage(),
-      middlewares: [AuthMiddleware()],
-    ),
+    // GetPage(
+    //   name: '/apps/ecommerce/invoice',
+    //   page: () => InvoicePage(),
+    //   middlewares: [AuthMiddleware()],
+    // ),
     GetPage(
       name: '/apps/hr_management',
       page: () => EmployeeListScreen(),

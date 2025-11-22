@@ -16,8 +16,10 @@ class CrmDashboardController extends MyController {
       crmData = value;
       update();
     });
-    tooltipBehavior =
-        TooltipBehavior(enable: true, tooltipPosition: TooltipPosition.pointer);
+    tooltipBehavior = TooltipBehavior(
+      enable: true,
+      tooltipPosition: TooltipPosition.pointer,
+    );
     super.onInit();
   }
 
@@ -49,31 +51,35 @@ class CrmDashboardController extends MyController {
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
         markerSettings: MarkerSettings(isVisible: true),
         dataLabelSettings: DataLabelSettings(
-            isVisible: true, textStyle: TextStyle(fontSize: 10)),
-      )
+          isVisible: true,
+          textStyle: TextStyle(fontSize: 10),
+        ),
+      ),
     ];
   }
 
   List<PieSeries<ChartSampleData, String>> getSourceChart() {
     return <PieSeries<ChartSampleData, String>>[
       PieSeries<ChartSampleData, String>(
-          explode: true,
-          explodeIndex: 0,
-          dataSource: <ChartSampleData>[
-            ChartSampleData(
-                x: 'Prospecting', y: 13, text: 'Prospecting \n 13%'),
-            ChartSampleData(
-                x: 'Negotiation', y: 24, text: 'Negotiation \n 24%'),
-            ChartSampleData(x: 'Proposal', y: 25, text: 'Proposal \n 25%'),
-            ChartSampleData(
-                x: 'Qualification', y: 38, text: 'Qualification \n 38%'),
-          ],
-          xValueMapper: (ChartSampleData data, _) => data.x as String,
-          yValueMapper: (ChartSampleData data, _) => data.y,
-          dataLabelMapper: (ChartSampleData data, _) => data.text,
-          startAngle: 90,
-          endAngle: 90,
-          dataLabelSettings: DataLabelSettings(isVisible: true)),
+        explode: true,
+        explodeIndex: 0,
+        dataSource: <ChartSampleData>[
+          ChartSampleData(x: 'Prospecting', y: 13, text: 'Prospecting \n 13%'),
+          ChartSampleData(x: 'Negotiation', y: 24, text: 'Negotiation \n 24%'),
+          ChartSampleData(x: 'Proposal', y: 25, text: 'Proposal \n 25%'),
+          ChartSampleData(
+            x: 'Qualification',
+            y: 38,
+            text: 'Qualification \n 38%',
+          ),
+        ],
+        xValueMapper: (ChartSampleData data, _) => data.x as String,
+        yValueMapper: (ChartSampleData data, _) => data.y,
+        dataLabelMapper: (ChartSampleData data, _) => data.text,
+        startAngle: 90,
+        endAngle: 90,
+        dataLabelSettings: DataLabelSettings(isVisible: true),
+      ),
     ];
   }
 }

@@ -34,12 +34,12 @@ class _CompanyHomePageState extends State<CompanyHomePage>
   final List<Map<String, dynamic>> buttonData = [
     {
       'label': 'Attendance',
-      'imageAsset': 'assets/images/logo/attendance.jpg',
+      'imageAsset': 'assets/images/logo/attendance_n.png',
       'onTap': 'attendance',
     },
     {
       'label': 'Trip List',
-      'imageAsset': 'assets/images/logo/location.jpg',
+      'imageAsset': 'assets/images/logo/location_n.png',
       'onTap': 'taskList',
     },
   ];
@@ -293,7 +293,7 @@ class _CompanyHomePageState extends State<CompanyHomePage>
                                   child: Padding(
                                     padding: const EdgeInsets.all(0),
                                     child: Image.asset(
-                                      'assets/images/logo/company_logo.png',
+                                      'assets/images/logo/app_logo_new.png',
                                       fit: BoxFit.contain,
                                     ),
                                   ),

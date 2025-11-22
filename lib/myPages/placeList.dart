@@ -1,3 +1,4 @@
+
 import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/mycontroller/place_list_controller.dart';
 import 'package:flatten/controllers/mycontroller/trip_images_controller.dart';

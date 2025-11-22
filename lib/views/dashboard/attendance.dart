@@ -53,12 +53,12 @@ class _AttendanceState extends State<Attendance>
   @override
   Widget build(BuildContext context) {
     return Layout(
-      leadingWidget: IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: Icon(Icons.arrow_back),
-      ),
+      // leadingWidget: IconButton(
+      //   onPressed: () {
+      //     Navigator.pop(context);
+      //   },
+      //   icon: Icon(Icons.arrow_back),
+      // ),
       floatingAction: GetBuilder(
         init: controller,
         builder: (controller) {

@@ -2,9 +2,8 @@ import 'dart:math';
 
 class Images {
   ///----------------- Brand -----------------------------------//
-  static String logoIcon = 'assets/images/logo/logo_icon_dark.png';
+  static String logoIcon = 'assets/images/logo/left_bar_mvd_logo.png';
   static String ethLogoIcon = 'assets/images/logo/ethereum-eth-logo.png';
-  static String companyLogo = 'assets/images/logo/company_logo.png';
 
   ///----------------- Dummy Image -----------------------------------//
 

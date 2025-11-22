@@ -149,6 +149,15 @@ class _LeftBarState extends State<LeftBar>
                             route: '/trip_list',
                           ),
 
+
+                        if (Responsive.isMobile(context))
+                          NavigationItem(
+                            iconData: Icons.store,
+                            title: "Warehouse View".tr(),
+                            isCondensed: isCondensed,
+                            route: '/warehouse_view',
+                          ),
+
                         if (Responsive.isDesktop(context))
                           NavigationItem(
                             iconData: Icons.report,
