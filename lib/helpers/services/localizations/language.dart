@@ -22,7 +22,7 @@ class Language {
   Language(this.locale, this.languageName, [this.supportRTL = false]);
 
   static Future<bool> init() async {
-    ThemeCustomizer.instance.currentLanguage = await getLanguage();
+    // ThemeCustomizer.instance.currentLanguage = await getLanguage();
     return true;
   }
 
