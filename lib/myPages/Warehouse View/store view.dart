@@ -57,16 +57,7 @@ class StoreWisePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Text(
-                          'Tap to open',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
+
                     ],
                   ),
                 ),

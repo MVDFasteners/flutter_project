@@ -1,5 +1,6 @@
 import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/auth/login_controller.dart';
+import 'package:flatten/models/user.dart';
 import 'package:flatten/myPages/TripListScreen.dart';
 import 'package:flatten/views/dashboard/attendance.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,9 @@ class _CompanyHomePageState extends State<CompanyHomePage>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
+  UserModel? userModel;
+  String? userImage;
+
   final baseTeal = const Color(0xff006784);
 
   final List<Map<String, dynamic>> buttonData = [
@@ -47,6 +51,8 @@ class _CompanyHomePageState extends State<CompanyHomePage>
   @override
   void initState() {
     super.initState();
+    controller = Get.put(LoginController());
+    _loadUser();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -61,7 +67,12 @@ class _CompanyHomePageState extends State<CompanyHomePage>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
-    controller = Get.put(LoginController());
+  }
+
+  Future<void> _loadUser() async {
+    userModel = await controller.fetchUser();
+    userImage = await controller.fetchImageBase64();
+    setState(() {});
   }
 
   @override
@@ -318,7 +329,10 @@ class _CompanyHomePageState extends State<CompanyHomePage>
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute<void>(
-                                      builder: (context) => const Attendance(),
+                                      builder: (context) => Attendance(
+                                        user: userModel ?? UserModel(),
+                                        userImage: userImage,
+                                      ),
                                     ),
                                   );
                                   // handleAttendance(context);
@@ -326,7 +340,10 @@ class _CompanyHomePageState extends State<CompanyHomePage>
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute<void>(
-                                      builder: (context) => TripListScreen(),
+                                      builder: (context) => TripListScreen(
+                                        userImage: userImage,
+                                        userModel: userModel,
+                                      ),
                                     ),
                                   );
                                 }

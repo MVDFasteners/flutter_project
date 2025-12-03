@@ -40,49 +40,49 @@ class TripListController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final LoginController loginCtrl = Get.put(LoginController());
 
-  @override
-  void onInit() {
-    super.onInit();
-    String currentMonthName = monthMap.keys.elementAt(DateTime.now().month - 1);
-    selectedMonth = currentMonthName;
-    selectedYear = DateTime.now().year.toString();
-    Map<String, String> dateFilter = {};
-    if (selectedYear != null &&
-        selectedMonth != null &&
-        loginCtrl.userModel.employeeId != null) {
-      dateFilter = getMonthDateRange(int.parse(selectedYear!), selectedMonth!);
-      print("From: ${dateFilter['fromDate']}");
-      print("To: ${dateFilter['toDate']}");
-
-      fetchTripList(
-        company: loginCtrl.userModel.company,
-        fromDate: dateFilter['fromDate'],
-        toDate: dateFilter['toDate'],
-        employeeId: loginCtrl.userModel.employeeId,
-        // limitStart: offset,
-        // limitPageLength: limit,
-        tripStatus: tripStatus,
-      );
-    }
-
-    // scrollController.addListener(() {
-    //   if (scrollController.position.pixels >=
-    //           scrollController.position.maxScrollExtent - 200 &&
-    //       !isLoading) {
-    //     fetchTripList(
-    //       company: loginCtrl.userModel.company,
-    //       fromDate: dateFilter['fromDate'],
-    //       toDate: dateFilter['toDate'],
-    //       employeeId: loginCtrl.userModel.employeeId,
-    //       // limitStart: offset,
-    //       // limitPageLength: limit,
-    //       tripStatus: tripStatus,
-    //     );
-    //   } else {
-    //     print("Not triggered");
-    //   }
-    // });
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   // String currentMonthName = monthMap.keys.elementAt(DateTime.now().month - 1);
+  //   // selectedMonth = currentMonthName;
+  //   // selectedYear = DateTime.now().year.toString();
+  //   // Map<String, String> dateFilter = {};
+  //   // if (selectedYear != null &&
+  //   //     selectedMonth != null &&
+  //   //     loginCtrl.userModel.employeeId != null) {
+  //   //   dateFilter = getMonthDateRange(int.parse(selectedYear!), selectedMonth!);
+  //   //   print("From: ${dateFilter['fromDate']}");
+  //   //   print("To: ${dateFilter['toDate']}");
+  //   //
+  //   //   fetchTripList(
+  //   //     company: loginCtrl.userModel.company,
+  //   //     fromDate: dateFilter['fromDate'],
+  //   //     toDate: dateFilter['toDate'],
+  //   //     employeeId: loginCtrl.userModel.employeeId,
+  //   //     // limitStart: offset,
+  //   //     // limitPageLength: limit,
+  //   //     tripStatus: tripStatus,
+  //   //   );
+  //   // }
+  //
+  //   // scrollController.addListener(() {
+  //   //   if (scrollController.position.pixels >=
+  //   //           scrollController.position.maxScrollExtent - 200 &&
+  //   //       !isLoading) {
+  //   //     fetchTripList(
+  //   //       company: loginCtrl.userModel.company,
+  //   //       fromDate: dateFilter['fromDate'],
+  //   //       toDate: dateFilter['toDate'],
+  //   //       employeeId: loginCtrl.userModel.employeeId,
+  //   //       // limitStart: offset,
+  //   //       // limitPageLength: limit,
+  //   //       tripStatus: tripStatus,
+  //   //     );
+  //   //   } else {
+  //   //     print("Not triggered");
+  //   //   }
+  //   // });
+  // }
 
   void updateCurrentTrip(Trip trip) {
     currentTrip = trip;

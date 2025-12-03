@@ -31,9 +31,12 @@ class Layout extends StatelessWidget {
   final Widget? floatingAction;
   final Widget? bottomBar;
   final Widget? leadingWidget;
+  final UserModel? userModel;
+  final String? userImage;
 
   final LayoutController controller = LayoutController();
-  final LoginController loginController = Get.put(LoginController());
+
+  // final LoginController loginController = Get.put(LoginController());
 
   final topBarTheme = AdminTheme.theme.topBarTheme;
   final contentTheme = AdminTheme.theme.contentTheme;
@@ -46,6 +49,8 @@ class Layout extends StatelessWidget {
     this.scrollNeed = true,
     this.floatingAction,
     this.bottomBar,
+    this.userModel,
+    this.userImage,
   });
 
   @override
@@ -121,11 +126,9 @@ class Layout extends StatelessWidget {
                 },
                 child: MyContainer.rounded(
                   paddingAll: 0,
-                  child: loginController.userImage != null
+                  child: userImage != null
                       ? Image.memory(
-                          base64Decode(
-                            loginController.userImage!.split(',')[1],
-                          ),
+                          base64Decode(userImage!.split(',')[1]),
                           width: 50, // diameter
                           height: 100,
                           fit: BoxFit.fitHeight,
@@ -436,13 +439,13 @@ class Layout extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(loginController.userModel.fullName ?? "No Name"),
+                Text(userModel?.fullName ?? "No Name"),
                 const SizedBox(height: 4),
-                Text(loginController.userModel.employeeId ?? "No Employee Id"),
+                Text(userModel?.employeeId ?? "No Employee Id"),
                 const SizedBox(height: 4),
-                Text(loginController.userModel.department ?? "No Department"),
+                Text(userModel?.department ?? "No Department"),
                 const SizedBox(height: 4),
-                Text(loginController.userModel.company ?? "No Company"),
+                Text(userModel?.company ?? "No Company"),
                 const SizedBox(height: 4),
               ],
             ),
@@ -452,7 +455,7 @@ class Layout extends StatelessWidget {
           TextButton.icon(
             icon: Icon(Icons.logout, color: Colors.red),
             onPressed: () async {
-              await loginController.userLogOut();
+              await LoginController().userLogOut();
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => LoginPageNew()),
@@ -471,9 +474,9 @@ class Layout extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(shape: BoxShape.circle),
-      child: loginController.userImage != null
+      child: userImage != null
           ? Image.memory(
-              base64Decode(loginController.userImage!.split(',')[1]),
+              base64Decode(userImage!.split(',')[1]),
               width: size, // diameter
               height: size,
               fit: BoxFit.fitHeight,

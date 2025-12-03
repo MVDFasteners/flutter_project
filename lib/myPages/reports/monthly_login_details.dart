@@ -80,7 +80,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                     onChanged: (value) async {
                       await Future.delayed(
                         const Duration(milliseconds: 500),
-                        () async {
+                            () async {
                           await controller.onEmployeeNameTypeForMonthReport(
                             value,
                           );
@@ -103,8 +103,6 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
               ),
 
               const SizedBox(width: 8),
-
-              // 🏢 Company Dropdown — styled like TextField
               Expanded(
                 child: SizedBox(
                   height: 60,
@@ -124,14 +122,15 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                     ),
                     items: controller.companyList
                         .map(
-                          (item) => DropdownMenuItem<String>(
+                          (item) =>
+                          DropdownMenuItem<String>(
                             value: item,
                             child: Text(
                               item,
                               style: const TextStyle(fontSize: 15),
                             ),
                           ),
-                        )
+                    )
                         .toList(),
                     onChanged: (value) async {
                       if (value != null) {
@@ -204,9 +203,10 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                 int endDate = getDaysInMonth(year, month!);
                 for (int day = 1; day <= endDate; day++) {
                   String currentDate =
-                      "$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
+                      "$year-${month.toString().padLeft(2, '0')}-${day
+                      .toString().padLeft(2, '0')}";
                   var log = employee.logList.firstWhere(
-                    (log) => log.inDate == currentDate,
+                        (log) => log.inDate == currentDate,
                     orElse: () => ReportEmployeesLoginListMonthly(),
                   );
 
@@ -240,7 +240,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                         }
 
                         ReportEmployeesLoginList employeeLog =
-                            ReportEmployeesLoginList();
+                        ReportEmployeesLoginList();
                         employeeLog.inTime = log.inTime;
                         employeeLog.outTime = log.outTime;
                         employeeLog.outDate = log.outDate ?? currentDate;
@@ -303,7 +303,8 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                                     Text(
                                       log.inTime == null || log.inTime == ""
                                           ? "---"
-                                          : "${timeStringToStringWithAmPM(railwayTime: log.inTime!)}",
+                                          : "${timeStringToStringWithAmPM(
+                                          railwayTime: log.inTime!)}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
@@ -312,7 +313,8 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                                     Text(
                                       log.outTime == null || log.outTime == ""
                                           ? "---"
-                                          : "${timeStringToStringWithAmPM(railwayTime: log.outTime!)}",
+                                          : "${timeStringToStringWithAmPM(
+                                          railwayTime: log.outTime!)}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
@@ -397,7 +399,9 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
   }
 
   Widget _popUpMenuBuilderForYearlySummary(HRReportController controller) {
-    final currentYear = DateTime.now().year;
+    final currentYear = DateTime
+        .now()
+        .year;
     final startYear = 2024;
 
     final List<String> yearList = [
@@ -415,7 +419,10 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
             height: 32,
             child: MyText.bodySmall(
               yrs,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .onSurface,
               fontWeight: 600,
             ),
           );
@@ -445,7 +452,9 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
   }
 
   Widget _popUpMenuBuilderForMonthlySummary(HRReportController controller) {
-    String currentMonthName = monthMap.keys.elementAt(DateTime.now().month - 1);
+    String currentMonthName = monthMap.keys.elementAt(DateTime
+        .now()
+        .month - 1);
     controller.selectedMonth ??= currentMonthName;
     return PopupMenuButton<String>(
       onSelected: controller.onSelectMonth,
@@ -456,7 +465,10 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
             height: 36,
             child: MyText.bodySmall(
               month,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme
+                  .of(context)
+                  .colorScheme
+                  .onSurface,
               fontWeight: 600,
             ),
           );
@@ -485,10 +497,8 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
     );
   }
 
-  Future<void> showLogInformation(
-    Map<String, int> status,
-    EmployeeAttendance employee,
-  ) async {
+  Future<void> showLogInformation(Map<String, int> status,
+      EmployeeAttendance employee,) async {
     int presentDays = status['presentDays'] ?? 0;
     int absentDays = status['absentDays'] ?? 0;
     int halfDays = status['halfDays'] ?? 0;

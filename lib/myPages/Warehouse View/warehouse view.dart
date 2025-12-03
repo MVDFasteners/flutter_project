@@ -90,16 +90,6 @@ class _RackGridPageState extends State<RackView> {
                           ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Text(
-                          'Tap to open',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -151,7 +141,7 @@ class _RackDetailPageState extends State<RackDetailPage> {
     final bins = widget.rack.bins;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.rack.id),
+        title: Text(widget.rack.id, style: TextStyle(color: Colors.black),),
         actions: [
           if (selected.isNotEmpty)
             Center(
@@ -176,8 +166,8 @@ class _RackDetailPageState extends State<RackDetailPage> {
             final bin = bins[index];
             final isSelected = selected.contains(index);
             return GestureDetector(
-              onTap: () => toggleSelect(index),
-              onLongPress: () => toggleSelect(index),
+              // onTap: () => toggleSelect(index),
+              // onLongPress: () => toggleSelect(index),
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 160),
                 decoration: BoxDecoration(
@@ -188,10 +178,10 @@ class _RackDetailPageState extends State<RackDetailPage> {
                             : Colors.grey.withOpacity(0.06)),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isSelected
-                        ? Colors.blue
-                        : (bin.filled ? Colors.green : Colors.grey.shade300),
-                    width: isSelected ? 2 : 1,
+                    color: index == 2
+                        ? Colors.green
+                        : Colors.blue,
+                    width: isSelected ? 4 : 1,
                   ),
                 ),
                 child: Column(
@@ -201,7 +191,12 @@ class _RackDetailPageState extends State<RackDetailPage> {
                     SizedBox(height: 8),
                     Icon(bin.filled ? Icons.inventory_2 : Icons.inbox),
                     SizedBox(height: 8),
-                    Text(bin.filled ? 'Filled' : 'Empty'),
+                    Text(
+                      index == 2 ? 'Empty' : 'Filled',
+                      style: TextStyle(
+                        color: index == 2 ? Colors.green : Colors.red,
+                      ),
+                    ),
                   ],
                 ),
               ),

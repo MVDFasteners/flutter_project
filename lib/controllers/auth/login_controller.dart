@@ -31,7 +31,7 @@ class LoginController extends MyController {
   @override
   void onInit() {
     super.onInit();
-    _fetchUser();
+    // _fetchUser();
     basicValidator.addField(
       'email',
       required: true,
@@ -49,11 +49,12 @@ class LoginController extends MyController {
     );
   }
 
-  Future<void> _fetchUser() async {
+  Future<UserModel?> fetchUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String? userId = pref.getString("email");
     if (userId != null) {
-      await fetchUserByValue(userId);
+      UserModel? user = await fetchUserByValue(userId);
+      return user;
     }
   }
 
@@ -189,10 +190,10 @@ class LoginController extends MyController {
     return null;
   }
 
-  Future<void> fetchUserByValue(String value) async {
+  Future<UserModel?> fetchUserByValue(String value) async {
     if (AuthService.sessionId == null) {
       print("❌ No session found. Please login first.");
-      return;
+      return null;
     }
 
     final url = Uri.parse(
@@ -216,17 +217,12 @@ class LoginController extends MyController {
 
         if (message is Map && message.containsKey('error')) {
           print("❌ Error: ${message['error']}");
-          return;
+          return null;
         }
 
         userModel = UserModel.fromJson(message);
-        await fetchImageBase64();
-
-        print(
-          "✅ User fetched: ${userModel.fullName}, ${userModel.company}, ${userModel.department}",
-        );
-
         update();
+        return userModel;
       } else {
         print("❌ HTTP Error ${response.statusCode}: ${response.body}");
       }
@@ -316,7 +312,7 @@ class LoginController extends MyController {
   //   }
   // }
 
-  Future<void> fetchImageBase64() async {
+  Future<String?> fetchImageBase64() async {
     String? imagePath = userModel.image;
     String? sessionId = AuthService.sessionId;
 
@@ -336,6 +332,7 @@ class LoginController extends MyController {
           var value = data["message"];
           userImage = value['image_base64'];
           update();
+          return value['image_base64'];
         }
       } catch (e) {
         print("Error fetching image: $e");

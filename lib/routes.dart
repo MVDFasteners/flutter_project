@@ -144,11 +144,11 @@ List<GetPage> getPageRoute() {
       middlewares: [AuthMiddleware()],
     ),
 
-    GetPage(
-      name: '/login_details',
-      page: () => CheckinDetails(),
-      // middlewares: [AuthMiddleware()],
-    ),
+    // GetPage(
+    //   name: '/login_details',
+    //   page: () => CheckinDetails(),
+    //   // middlewares: [AuthMiddleware()],
+    // ),
 
     GetPage(
       name: '/trip_list',

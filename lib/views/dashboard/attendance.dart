@@ -18,7 +18,9 @@ import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/images.dart';
 import 'package:flatten/models/attendance.dart';
+import 'package:flatten/models/user.dart';
 import 'package:flatten/myPages/cam_screen.dart';
+import 'package:flatten/myPages/view_login_details.dart';
 import 'package:flatten/responsive.dart';
 import 'package:flatten/views/layouts/layout.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +35,10 @@ import 'package:intl/intl.dart';
 import 'package:flatten/controllers/mycontroller/attendance_controller.dart';
 
 class Attendance extends StatefulWidget {
-  const Attendance({super.key});
+  final UserModel? user;
+  final String? userImage;
+
+  const Attendance({super.key, this.user, this.userImage});
 
   @override
   State<Attendance> createState() => _AttendanceState();
@@ -48,17 +53,27 @@ class _AttendanceState extends State<Attendance>
   void initState() {
     controller = Get.put(AttendanceController(this));
     super.initState();
+    _loadLoginDetails();
+  }
+
+  Future<void> _loadLoginDetails() async {
+    String currentMonthName = monthMap.keys.elementAt(DateTime.now().month - 1);
+    controller.selectedMonth = currentMonthName;
+    controller.selectedYear = DateTime.now().year.toString();
+    await controller.fetchListWithFilter();
   }
 
   @override
   Widget build(BuildContext context) {
     return Layout(
-      // leadingWidget: IconButton(
-      //   onPressed: () {
-      //     Navigator.pop(context);
-      //   },
-      //   icon: Icon(Icons.arrow_back),
-      // ),
+      leadingWidget: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back),
+      ),
+      userImage: widget.userImage,
+      userModel: widget.user,
       floatingAction: GetBuilder(
         init: controller,
         builder: (controller) {
@@ -191,7 +206,16 @@ class _AttendanceState extends State<Attendance>
                                 await controller.updateEmployeeLogin(
                                   controller.employeeLoginList[index],
                                 );
-                                Get.toNamed('/login_details');
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => CheckinDetails(
+                                      userModel: widget.user ?? UserModel(),
+                                      userImage: widget.userImage,
+                                    ),
+                                  ),
+                                );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 12),

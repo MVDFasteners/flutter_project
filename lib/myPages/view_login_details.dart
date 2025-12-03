@@ -17,6 +17,7 @@ import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/images.dart';
 import 'package:flatten/models/attendance.dart';
+import 'package:flatten/models/user.dart';
 import 'package:flatten/views/layouts/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flatten/helpers/extensions/string.dart';
@@ -27,7 +28,10 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
 class CheckinDetails extends StatefulWidget {
-  const CheckinDetails({super.key});
+  final UserModel userModel;
+  final String? userImage;
+
+  const CheckinDetails({super.key, required this.userModel, this.userImage});
 
   @override
   State<CheckinDetails> createState() => _CheckinDetailsState();
@@ -46,9 +50,14 @@ class _CheckinDetailsState extends State<CheckinDetails>
   @override
   Widget build(BuildContext context) {
     return Layout(
-      leadingWidget: IconButton(onPressed: () {
-        Navigator.pop(context);
-      }, icon: Icon(Icons.arrow_back)),
+      userModel: widget.userModel,
+      userImage: widget.userImage,
+      leadingWidget: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back),
+      ),
       scrollNeed: false,
       child: GetBuilder(
         init: controller,

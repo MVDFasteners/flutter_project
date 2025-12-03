@@ -10,6 +10,7 @@ import 'package:flatten/helpers/widgets/my_container.dart';
 import 'package:flatten/helpers/widgets/my_spacing.dart';
 import 'package:flatten/helpers/widgets/my_text.dart';
 import 'package:flatten/models/trip_list.dart';
+import 'package:flatten/models/user.dart';
 import 'package:flatten/myPages/locaiton_service.dart';
 import 'package:flatten/myPages/placeList.dart';
 import 'package:flatten/responsive.dart';
@@ -22,13 +23,18 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:flatten/controllers/mycontroller/trip_images_controller.dart';
 
 class TripListScreen extends StatefulWidget {
+  final String? userImage;
+  final UserModel? userModel;
+
+  const TripListScreen({super.key, this.userImage, this.userModel});
+
   @override
   State<TripListScreen> createState() => _TripListScreenState();
 }
 
 class _TripListScreenState extends State<TripListScreen>
     with SingleTickerProviderStateMixin, UIMixin {
-  final TripListController controller = Get.put(TripListController());
+  late TripListController controller;
   final ScrollController scrollController = ScrollController();
   final LocationService locationService = LocationService();
   final PlaceListController placeListController = Get.put(
@@ -37,8 +43,43 @@ class _TripListScreenState extends State<TripListScreen>
   final TripImagesController tripImageCtrl = Get.put(TripImagesController());
 
   @override
+  void initState() {
+    super.initState();
+    controller = Get.put(TripListController());
+    _load();
+  }
+
+  Future<void> _load() async {
+    String currentMonthName = monthMap.keys.elementAt(DateTime.now().month - 1);
+    controller.selectedMonth = currentMonthName;
+    controller.selectedYear = DateTime.now().year.toString();
+    Map<String, String> dateFilter = {};
+    if (controller.selectedYear != null &&
+        controller.selectedMonth != null &&
+        widget.userModel?.employeeId != null) {
+      dateFilter = controller.getMonthDateRange(
+        int.parse(controller.selectedYear!),
+        controller.selectedMonth!,
+      );
+      print("From: ${dateFilter['fromDate']}");
+      print("To: ${dateFilter['toDate']}");
+
+      if (widget.userModel != null) {
+        await controller.fetchTripList(
+          company: widget.userModel!.company,
+          fromDate: dateFilter['fromDate'],
+          toDate: dateFilter['toDate'],
+          employeeId: widget.userModel!.employeeId,
+          tripStatus: controller.tripStatus,
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Layout(
+      userImage: widget.userImage,
       leadingWidget: IconButton(
         onPressed: () {
           Navigator.pop(context);

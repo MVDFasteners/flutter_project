@@ -162,10 +162,7 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                   },
                 ),
               ),
-
               const SizedBox(width: 8),
-
-              // 👤 Employee Name Text Field
               Expanded(
                 child: SizedBox(
                   height: 60,
@@ -195,8 +192,6 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
               ),
 
               const SizedBox(width: 8),
-
-              // 🏢 Company Dropdown — styled like TextField
               Expanded(
                 child: SizedBox(
                   height: 60,

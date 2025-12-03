@@ -15,6 +15,9 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:flatten/app_constant.dart';
+import 'package:http/http.dart' as http;
+
 //  this is testing commit
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +46,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isLoading = true;
+  bool _isValid = false;
 
   @override
   void initState() {
@@ -54,7 +58,25 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     AuthService.sessionId = pref.getString("session_id");
     print("Session ID: ${AuthService.sessionId}");
-    setState(() => _isLoading = false);
+    _isValid = await isSessionValid();
+    _isLoading = false;
+    setState(() {});
+  }
+
+  Future<bool> isSessionValid() async {
+    final url = Uri.parse('$baseUrl/api/method/frappe.auth.get_logged_user');
+    print("sid=${AuthService.sessionId}");
+    final response = await http.get(
+      url,
+      headers: {"Cookie": "${AuthService.sessionId}"},
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 403) {
+      return false; // Session expired
+    } else {
+      return false;
+    }
   }
 
   @override

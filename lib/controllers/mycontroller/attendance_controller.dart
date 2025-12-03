@@ -56,9 +56,6 @@ class AttendanceController extends MyController {
   @override
   void onInit() {
     super.onInit();
-    String currentMonthName = monthMap.keys.elementAt(DateTime.now().month - 1);
-    selectedMonth = currentMonthName;
-    selectedYear = DateTime.now().year.toString();
 
     defaultTabController.addListener(() {
       if (defaultIndex != defaultTabController.index) {
@@ -67,7 +64,7 @@ class AttendanceController extends MyController {
       }
     });
 
-    fetchListWithFilter();
+    // fetchListWithFilter();
   }
 
   Future<void> fetchListWithFilter() async {
@@ -747,7 +744,7 @@ class AttendanceController extends MyController {
     Set absentDaysSetN = notPunchedList.difference(leaveDates);
 
     print(absentDaysSetN);
-      absentDaysSetN.toList();
+    absentDaysSetN.toList();
     absentDays = absentDaysSetN.length;
     presentDays = leaveList.length;
     for (EmployeeLogin log in loginList) {
