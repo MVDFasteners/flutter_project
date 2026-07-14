@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 final DateFormat dateFormatter = DateFormat('dd/MM/yyyy');
 final DateFormat timeFormatter = DateFormat('jms');
 
-String baseUrl = "http://208.115.124.12:8000";
+// String baseUrl = "http://208.115.124.12:8000";
+const String baseUrl = "https://erp.mvdfastener.in";
 // String baseUrl = "http://192.168.1.143:8000";
 String backendUrl = "http://192.168.1.43:3000";
 

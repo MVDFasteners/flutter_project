@@ -284,73 +284,75 @@ class _CompanyHomePageState extends State<CompanyHomePage>
                 child: SlideTransition(
                   position: _slideAnimation,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: TweenAnimationBuilder<double>(
-                            duration: const Duration(milliseconds: 800),
-                            tween: Tween(begin: 0.0, end: 1.0),
-                            builder: (context, value, child) => Transform.scale(
-                              scale: value,
-                              child: SizedBox(
-                                width: logoSize,
-                                height: logoSize,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(0),
-                                    child: Image.asset(
-                                      'assets/images/logo/app_logo_new.png',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 16),
+                      //   child: Align(
+                      //     alignment: Alignment.topCenter,
+                      //     child: TweenAnimationBuilder<double>(
+                      //       duration: const Duration(milliseconds: 800),
+                      //       tween: Tween(begin: 0.0, end: 1.0),
+                      //       builder: (context, value, child) => Transform.scale(
+                      //         scale: value,
+                      //         child: SizedBox(
+                      //           width: logoSize,
+                      //           height: logoSize,
+                      //           child: ClipRRect(
+                      //             borderRadius: BorderRadius.circular(50),
+                      //             child: Padding(
+                      //               padding: const EdgeInsets.all(0),
+                      //               child: Image.asset(
+                      //                 'assets/images/logo/app_logo_new.png',
+                      //                 fit: BoxFit.contain,
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 32.0),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 18,
+                            runSpacing: 18,
+                            children: buttonData.map((data) {
+                              return _buildRoundedCardButton(
+                                label: data['label'],
+                                imageAsset: data['imageAsset'],
+                                onTap: () {
+                                  if (data['onTap'] == 'attendance') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (context) => Attendance(
+                                          user: userModel ?? UserModel(),
+                                          userImage: userImage,
+                                        ),
+                                      ),
+                                    );
+                                    // handleAttendance(context);
+                                  } else if (data['onTap'] == 'taskList') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (context) => TripListScreen(
+                                          userImage: userImage,
+                                          userModel: userModel,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                size: cardSize,
+                              );
+                            }).toList(),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 32.0),
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 18,
-                          runSpacing: 18,
-                          children: buttonData.map((data) {
-                            return _buildRoundedCardButton(
-                              label: data['label'],
-                              imageAsset: data['imageAsset'],
-                              onTap: () {
-                                if (data['onTap'] == 'attendance') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => Attendance(
-                                        user: userModel ?? UserModel(),
-                                        userImage: userImage,
-                                      ),
-                                    ),
-                                  );
-                                  // handleAttendance(context);
-                                } else if (data['onTap'] == 'taskList') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => TripListScreen(
-                                        userImage: userImage,
-                                        userModel: userModel,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                              size: cardSize,
-                            );
-                          }).toList(),
                         ),
                       ),
                     ],

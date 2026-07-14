@@ -6,26 +6,15 @@ import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/auth/login_controller.dart';
 import 'package:flatten/controllers/my_controller.dart';
 import 'package:flatten/controllers/mycontroller/camera_controller.dart';
-import 'package:flatten/controllers/other/syncfusion_charts_controller.dart';
-import 'package:flatten/helpers/extensions/extensions.dart';
 import 'package:flatten/helpers/services/auth_service.dart';
-import 'package:flatten/helpers/theme/app_style.dart';
 import 'package:flatten/images.dart';
 import 'package:flatten/models/attendance.dart';
-import 'package:flatten/models/customer.dart';
-import 'package:flatten/models/product.dart';
-import 'package:flatten/models/sales_team_summary.dart';
-import 'package:flatten/models/sales_yearly_summary.dart';
-import 'package:flatten/models/user.dart';
 import 'package:flatten/myPages/locaiton_service.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:syncfusion_flutter_charts/charts.dart' hide Position;
 
 class AttendanceController extends MyController {
   List<EmployeeLogin> employeeLoginList = [];
@@ -465,139 +454,6 @@ class AttendanceController extends MyController {
     update();
   }
 
-  //
-  // Future<void> saveLoginEntry({
-  //   required Uint8List compressedBytes,
-  //   required String fileName,
-  // }) async {
-  //   DateTime now = DateTime.now();
-  //   String currentDate = DateFormat('yyyy-MM-dd').format(now);
-  //   String currentTime = DateFormat('HH:mm:ss').format(now);
-  //   EmployeeLogin newLogin;
-  //
-  //   if (loginStatusCurrent == "IN") {
-  //     newLogin = EmployeeLogin();
-  //   } else {
-  //     newLogin = employeeLoginList.first;
-  //   }
-  //
-  //   Position? position = await LocationService().getCurrentPosition();
-  //   String address = "----";
-  //
-  //   if (position != null) {
-  //     double lat = position.latitude;
-  //     double long = position.longitude;
-  //     print(lat + long);
-  //     address = await LocationService().getAddressFromLatLng(lat, long);
-  //   }
-  //   if (loginStatusCurrent == "IN") {
-  //     newLogin = EmployeeLogin(
-  //       employee: loginCtrl.userModel.employeeId,
-  //       company: loginCtrl.userModel.company,
-  //       user: loginCtrl.userModel.userId,
-  //       inDate: currentDate,
-  //       inTime: currentTime,
-  //       inLocation: address,
-  //       // inPhoto: fileUrl,
-  //     );
-  //   } else {
-  //     if (newLogin.id != null) {
-  //       String? fileUrl = await cameraControllerNew.uploadImageBytesToERPNext(
-  //         compressedBytes: compressedBytes,
-  //         docname: newLogin.id!,
-  //         doctype: "Employee Login",
-  //         fileFieldName: "out_photo",
-  //         fileName: fileName,
-  //       );
-  //
-  //       print(fileUrl);
-  //
-  //       newLogin = EmployeeLogin(
-  //         id: newLogin.id,
-  //         employee: loginCtrl.userModel.employeeId,
-  //         company: loginCtrl.userModel.company,
-  //         user: loginCtrl.userModel.userId,
-  //         inTime: newLogin.inTime,
-  //         inDate: newLogin.inDate,
-  //         inLocation: newLogin.inLocation,
-  //         outDate: currentDate,
-  //         outTime: currentTime,
-  //         outLocation: address,
-  //         inPhoto: newLogin.inPhoto,
-  //         outPhoto: fileUrl,
-  //       );
-  //     } else {
-  //       toastMessage(message: "Id Not found to Update Log Out");
-  //     }
-  //   }
-  //
-  //   if (AuthService.sessionId == null) {
-  //     print("❌ No session found. Please login first.");
-  //     return;
-  //   }
-  //
-  //   final url = Uri.parse("$backendUrl/save_user_login");
-  //   final Map<String, dynamic> body = {
-  //     'cookie': AuthService.sessionId,
-  //     'data': newLogin.toJson(),
-  //   };
-  //
-  //   try {
-  //     final response = await http.post(
-  //       url,
-  //       headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-  //       body: jsonEncode(body),
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       String? loginId = data['message']['name'];
-  //       if (loginId != null) {
-  //         if (loginStatusCurrent == "IN") {
-  //           await updateLoginEntryIN(
-  //             fileName: fileName,
-  //             compressedBytes: compressedBytes,
-  //             loginId: loginId,
-  //           );
-  //         }
-  //       }
-  //
-  //       Map<String, String> dateFilter = {};
-  //
-  //       if (selectedYear != null &&
-  //           selectedMonth != null &&
-  //           loginCtrl.userModel.employeeId != null) {
-  //         dateFilter = getMonthDateRange(
-  //           int.parse(selectedYear!),
-  //           selectedMonth!,
-  //         );
-  //         print("From: ${dateFilter['fromDate']}");
-  //         print("To: ${dateFilter['toDate']}");
-  //
-  //         await fetchLoginList(
-  //           company: loginCtrl.userModel.company,
-  //           fromDate: dateFilter['fromDate'],
-  //           toDate: dateFilter['toDate'],
-  //           employeeId: loginCtrl.userModel.employeeId,
-  //         );
-  //       }
-  //
-  //       if (data['message'] != null) {
-  //         print(
-  //           "✅ Employee Login ${data['message']['status']}: ${data['message']['name']}",
-  //         );
-  //       } else {
-  //         print("⚠️ Response: $data");
-  //       }
-  //     } else {
-  //       print("❌ Error ${response.statusCode}: ${response.body}");
-  //     }
-  //   } catch (e) {
-  //     print("⚠️ Error: ${e.toString()}");
-  //   }
-  //   update();
-  // }
-
   Future<bool?> updateLoginEntryIN({
     required String loginId,
     required Uint8List compressedBytes,
@@ -651,50 +507,6 @@ class AttendanceController extends MyController {
     update();
     return false;
   }
-
-  // Future<bool?> updateLoginEntryIN({
-  //   required String loginId,
-  //   required Uint8List compressedBytes,
-  //   required String fileName,
-  // }) async {
-  //   String? fileUrl = await cameraControllerNew.uploadImageBytesToERPNext(
-  //     compressedBytes: compressedBytes,
-  //     docname: loginId,
-  //     doctype: "Employee Login",
-  //     fileFieldName: "in_photo",
-  //     fileName: fileName,
-  //   );
-  //
-  //   if (fileUrl != null) {
-  //     final url = Uri.parse("$backendUrl/save_user_login");
-  //     final Map<String, dynamic> body = {
-  //       'cookie': AuthService.sessionId,
-  //       'data': {'name': loginId, 'in_photo': fileUrl},
-  //     };
-  //
-  //     try {
-  //       final response = await http.post(
-  //         url,
-  //         headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-  //         body: jsonEncode(body),
-  //       );
-  //
-  //       if (response.statusCode == 200) {
-  //         final data = jsonDecode(response.body);
-  //         String? value = data['message']['status'];
-  //         if (value != null && value == "updated") {
-  //           return true;
-  //         }
-  //       } else {
-  //         print("❌ Error ${response.statusCode}: ${response.body}");
-  //       }
-  //     } catch (e) {
-  //       print("⚠️ Error: ${e.toString()}");
-  //     }
-  //   }
-  //
-  //   update();
-  // }
 
   String padTime(String time) {
     List<String> parts = time.split(':');

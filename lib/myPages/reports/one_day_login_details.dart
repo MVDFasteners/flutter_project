@@ -19,6 +19,7 @@ import 'package:flatten/images.dart';
 import 'package:flatten/models/attendance.dart';
 import 'package:flatten/models/chart_model.dart';
 import 'package:flatten/models/task_list_model.dart';
+import 'package:flatten/myPages/login_new_screen.dart';
 import 'package:flatten/myPages/reports/pdf_formate.dart';
 import 'package:flatten/views/layouts/layout.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flatten/app_constant.dart';
 import 'package:windows_toast/windows_toast.dart';
+import 'package:flatten/controllers/auth/login_controller.dart';
 
 class PerDayLogin extends StatefulWidget {
   const PerDayLogin({super.key});
@@ -88,7 +90,10 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                 label: Text("Edit"),
                 onPressed: () async {
                   if (controller.selectedEmployees.isNotEmpty) {
-                    await controller.showEditMultipleLoginDialog(context);
+                    await controller.showEditMultipleLoginDialog(
+                      context,
+                      controller.selectedEmployees,
+                    );
                   }
                 },
                 icon: Icon(Icons.edit),
@@ -101,6 +106,27 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                   }
                 },
                 icon: Icon(Icons.delete, color: Colors.red),
+              ),
+              TextButton.icon(
+                label: Text("Select All", style: TextStyle(color: Colors.red)),
+                onPressed: () async {
+                  controller.onSelectAll();
+                },
+                icon: Icon(Icons.select_all, color: Colors.red),
+              ),
+
+              TextButton.icon(
+                icon: Icon(Icons.logout, color: Colors.red),
+                onPressed: () async {
+                  await LoginController().userLogOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPageNew()),
+                    (Route<dynamic> route) =>
+                        false, // removes all previous routes
+                  );
+                },
+                label: Text("Log Out", style: TextStyle(color: Colors.red)),
               ),
             ],
           );
@@ -190,7 +216,6 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                   ),
                 ),
               ),
-
               const SizedBox(width: 8),
               Expanded(
                 child: SizedBox(
@@ -334,6 +359,12 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                     color: contentTheme.primary,
                   ),
                 ),
+                DataColumn(
+                  label: MyText.labelLarge(
+                    'Make Lock',
+                    color: contentTheme.primary,
+                  ),
+                ),
               ],
               rows: controller.reportEmployeesLoginList.mapIndexed((
                 index,
@@ -387,7 +418,6 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                       } else {
                         controller.selectedEmployees.add(data);
                       }
-
                       controller.update();
                       print("lenght = ${controller.selectedEmployees.length}");
                     }
@@ -501,6 +531,12 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                           fontWeight: 600,
                           overflow: TextOverflow.ellipsis,
                         ),
+                      ),
+                    ),
+                    DataCell(
+                      SizedBox(
+                        width: 30,
+                        child: Text(data.makeLock == 1 ? "Locked" : "---"),
                       ),
                     ),
                   ],
@@ -646,14 +682,20 @@ class _PerDayLoginState extends State<PerDayLogin> with UIMixin {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  TextFormField(
-                    controller: remarks,
-                    decoration: const InputDecoration(
-                      labelText: "Remarks",
-                      prefixIcon: Icon(Icons.note_alt),
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
+                  Row(
+                    children: [
+                      TextFormField(
+                        controller: remarks,
+                        decoration: const InputDecoration(
+                          labelText: "Remarks",
+                          prefixIcon: Icon(Icons.note_alt),
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                      ),
+                      SizedBox(width: 8),
+                      Checkbox(value: true, onChanged: (value) {}),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Row(

@@ -97,7 +97,9 @@ class _MyAppState extends State<MyApp> {
           navigatorKey: NavigationService.navigatorKey,
           initialRoute: Responsive.isDesktop(context)
               ? "/per_day_login_report"
-              : "/",
+              : _isValid
+              ? "/"
+              : "/auth/login",
           getPages: getPageRoute(),
           // onGenerateRoute: (_) => generateRoute(context, _),
           builder: (context, child) {

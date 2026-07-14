@@ -74,6 +74,9 @@ dependencies:
   printing: ^5.14.2
   pdf: ^3.11.3
   windows_toast: ^0.0.3
+  path_provider: ^2.1.5
+  open_file: ^3.5.11
+  syncfusion_flutter_xlsio: ^30.2.7
 
 
 dev_dependencies:
@@ -117,9 +120,9 @@ flutter_launcher_icons:
   ios: true
   windows:
     generate: true
-  image_path: "assets/images/logo/app_logo_new.png"
+  image_path: "assets/images/logo/logsys_app_logo_new.png"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/logo/app_logo_new.png"
+  adaptive_icon_foreground: "assets/images/logo/logsys_app_logo_new.png"
   remove_alpha_ios: true
 
   # An image asset can refer to one or more resolution-specific "variants", see

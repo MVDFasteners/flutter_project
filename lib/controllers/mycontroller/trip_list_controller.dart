@@ -185,7 +185,7 @@ class TripListController extends GetxController {
     }
 
     final url = Uri.parse(
-      "http://208.115.124.12:8000/api/method/my_api_app.api_methods.hr_modules_api.get_trip_list",
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_trip_list",
     );
 
     final Map<String, dynamic> body = {
@@ -241,7 +241,7 @@ class TripListController extends GetxController {
       return;
     }
     final url = Uri.parse(
-      "http://208.115.124.12:8000/api/method/my_api_app.api_methods.hr_modules_api.get_employee_list_all",
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_employee_list_all",
     );
 
     try {

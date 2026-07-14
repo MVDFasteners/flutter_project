@@ -100,6 +100,7 @@ class ReportEmployeesLoginList {
   String? message;
   String? isLeave;
   String? status;
+  int? makeLock;
 
   ReportEmployeesLoginList({
     this.loginId,
@@ -118,6 +119,7 @@ class ReportEmployeesLoginList {
     this.message,
     this.isLeave,
     this.status,
+    this.makeLock,
   });
 
   /// ✅ Convert JSON → Dart Object
@@ -139,6 +141,7 @@ class ReportEmployeesLoginList {
       isLeave: json['is_leave'],
       message: json['message'],
       status: json['status'],
+      makeLock: json['locked'],
     );
   }
 
@@ -160,8 +163,4 @@ class ReportEmployeesLoginList {
       'out_photo': outPhoto,
     };
   }
-
-  // Map<String, dynamic> updateImageFile() {
-  //   return {'name': id, 'in_photo': inPhoto};
-  // }
 }

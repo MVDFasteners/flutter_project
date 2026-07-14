@@ -1,4 +1,7 @@
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
+
 import 'dart:convert';
+import 'dart:io';
 import 'package:flatten/controllers/mycontroller/hr_report_controller.dart';
 import 'package:flatten/helpers/theme/app_style.dart';
 import 'package:flatten/helpers/utils/mixins/ui_mixin.dart';
@@ -16,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:get/get.dart';
 import 'package:flatten/app_constant.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MonthlyLoginDetails extends StatefulWidget {
   const MonthlyLoginDetails({super.key});
@@ -47,6 +52,47 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
   @override
   Widget build(BuildContext context) {
     return Layout(
+      anyWidget: GetBuilder(
+        init: controller,
+        tag: 'button',
+        builder: (controller) {
+          return Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.download),
+                onPressed: () async {
+                  int year = int.parse(controller.selectedYear ?? "2025");
+                  int month = monthMap[controller.selectedMonth ?? "Jan"]!;
+                  String company = controller.currentCompany ?? "Company";
+
+                  await exportAttendanceExcelSF(
+                    employees: controller.employeeLogMonthly,
+                    year: year,
+                    month: month,
+                  );
+                },
+              ),
+
+              // IconButton(
+              //   icon: const Icon(Icons.download),
+              //   onPressed: () {
+              //     showDialog(
+              //       context: context,
+              //       builder: (_) => Dialog(
+              //         insetPadding: const EdgeInsets.all(16),
+              //         child: SizedBox(
+              //           width: MediaQuery.of(context).size.width * 0.9,
+              //           height: MediaQuery.of(context).size.height * 0.85,
+              //           child: excelAttendanceView(controller),
+              //         ),
+              //       ),
+              //     );
+              //   },
+              // ),
+            ],
+          );
+        },
+      ),
       child: GetBuilder(
         init: controller,
         tag: 'monthly_log_report',
@@ -80,7 +126,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                     onChanged: (value) async {
                       await Future.delayed(
                         const Duration(milliseconds: 500),
-                            () async {
+                        () async {
                           await controller.onEmployeeNameTypeForMonthReport(
                             value,
                           );
@@ -122,15 +168,14 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                     ),
                     items: controller.companyList
                         .map(
-                          (item) =>
-                          DropdownMenuItem<String>(
+                          (item) => DropdownMenuItem<String>(
                             value: item,
                             child: Text(
                               item,
                               style: const TextStyle(fontSize: 15),
                             ),
                           ),
-                    )
+                        )
                         .toList(),
                     onChanged: (value) async {
                       if (value != null) {
@@ -203,10 +248,9 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                 int endDate = getDaysInMonth(year, month!);
                 for (int day = 1; day <= endDate; day++) {
                   String currentDate =
-                      "$year-${month.toString().padLeft(2, '0')}-${day
-                      .toString().padLeft(2, '0')}";
+                      "$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
                   var log = employee.logList.firstWhere(
-                        (log) => log.inDate == currentDate,
+                    (log) => log.inDate == currentDate,
                     orElse: () => ReportEmployeesLoginListMonthly(),
                   );
 
@@ -240,7 +284,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                         }
 
                         ReportEmployeesLoginList employeeLog =
-                        ReportEmployeesLoginList();
+                            ReportEmployeesLoginList();
                         employeeLog.inTime = log.inTime;
                         employeeLog.outTime = log.outTime;
                         employeeLog.outDate = log.outDate ?? currentDate;
@@ -303,8 +347,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                                     Text(
                                       log.inTime == null || log.inTime == ""
                                           ? "---"
-                                          : "${timeStringToStringWithAmPM(
-                                          railwayTime: log.inTime!)}",
+                                          : "${timeStringToStringWithAmPM(railwayTime: log.inTime!)}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
@@ -313,8 +356,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                                     Text(
                                       log.outTime == null || log.outTime == ""
                                           ? "---"
-                                          : "${timeStringToStringWithAmPM(
-                                          railwayTime: log.outTime!)}",
+                                          : "${timeStringToStringWithAmPM(railwayTime: log.outTime!)}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
@@ -399,9 +441,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
   }
 
   Widget _popUpMenuBuilderForYearlySummary(HRReportController controller) {
-    final currentYear = DateTime
-        .now()
-        .year;
+    final currentYear = DateTime.now().year;
     final startYear = 2024;
 
     final List<String> yearList = [
@@ -419,10 +459,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
             height: 32,
             child: MyText.bodySmall(
               yrs,
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: 600,
             ),
           );
@@ -452,9 +489,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
   }
 
   Widget _popUpMenuBuilderForMonthlySummary(HRReportController controller) {
-    String currentMonthName = monthMap.keys.elementAt(DateTime
-        .now()
-        .month - 1);
+    String currentMonthName = monthMap.keys.elementAt(DateTime.now().month - 1);
     controller.selectedMonth ??= currentMonthName;
     return PopupMenuButton<String>(
       onSelected: controller.onSelectMonth,
@@ -465,10 +500,7 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
             height: 36,
             child: MyText.bodySmall(
               month,
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: 600,
             ),
           );
@@ -497,8 +529,10 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
     );
   }
 
-  Future<void> showLogInformation(Map<String, int> status,
-      EmployeeAttendance employee,) async {
+  Future<void> showLogInformation(
+    Map<String, int> status,
+    EmployeeAttendance employee,
+  ) async {
     int presentDays = status['presentDays'] ?? 0;
     int absentDays = status['absentDays'] ?? 0;
     int halfDays = status['halfDays'] ?? 0;
@@ -520,11 +554,11 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Text("$name"),
+                  SizedBox(height: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text("$name"),
-                      SizedBox(height: 8),
                       Text(
                         "Present Days : ",
                         style: TextStyle(
@@ -615,5 +649,110 @@ class _MonthlyLoginDetailsState extends State<MonthlyLoginDetails>
         );
       },
     );
+  }
+
+  Future<void> exportAttendanceExcelSF({
+    required List<EmployeeAttendance> employees,
+    required int year,
+    required int month,
+  }) async {
+    xls.Workbook workbook = xls.Workbook();
+    final sheet = workbook.worksheets[0];
+    sheet.name = 'Attendance';
+
+    int days = DateTime(year, month + 1, 0).day;
+
+    /// Header
+    sheet.getRangeByIndex(1, 1).setText("Employee");
+    for (int d = 1; d <= days; d++) {
+      sheet.getRangeByIndex(1, d + 1).setText(d.toString().padLeft(2, '0'));
+    }
+
+    /// Data
+    int row = 2;
+    for (final emp in employees) {
+      sheet.getRangeByIndex(row, 1).setText(emp.employeeName ?? '');
+
+      for (int day = 1; day <= days; day++) {
+        String date =
+            "$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}";
+
+        final log = emp.logList.firstWhere(
+          (e) => e.inDate == date,
+          orElse: () => ReportEmployeesLoginListMonthly(),
+        );
+
+        String value;
+
+        if ((log.inTime == null || log.inTime!.isEmpty) &&
+            (log.outTime == null || log.outTime!.isEmpty)) {
+          value = "AB";
+        } else {
+          final inTime = log.inTime != null && log.inTime!.isNotEmpty
+              ? formatToAmPm(log.inTime!)
+              : "--";
+
+          final outTime = log.outTime != null && log.outTime!.isNotEmpty
+              ? capOutTimeToOfficeLimit(log.outTime!)
+              : "--";
+
+          value = "IN = $inTime\nOUT = $outTime";
+        }
+
+        sheet.getRangeByIndex(row, day + 1).setText(value);
+      }
+      row++;
+    }
+
+    /// Save
+    final bytes = workbook.saveAsStream();
+    workbook.dispose();
+
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File("${dir.path}/Attendance_${year}_$month.xlsx");
+    await file.writeAsBytes(bytes);
+
+    await OpenFile.open(file.path);
+  }
+
+  String formatToAmPm(String time) {
+    // input: 08:41:43 or 19:55:38
+    final parts = time.split(':');
+    int hour = int.parse(parts[0]);
+    int minute = int.parse(parts[1]);
+
+    final isPm = hour >= 12;
+    final displayHour = hour == 0
+        ? 12
+        : hour > 12
+        ? hour - 12
+        : hour;
+
+    final h = displayHour.toString().padLeft(2, '0');
+    final m = minute.toString().padLeft(2, '0');
+    final suffix = isPm ? 'PM' : 'AM';
+
+    return "$h:$m $suffix";
+  }
+
+  String capOutTimeToOfficeLimit(String time) {
+    // time format: HH:mm or HH:mm:ss
+    final parts = time.split(':');
+    int hour = int.parse(parts[0]);
+    int minute = int.parse(parts[1]);
+
+    // Convert to minutes from midnight
+    int totalMinutes = hour * 60 + minute;
+
+    // Office OUT time = 17:30 (5:30 PM)
+    const int officeOutMinutes = 17 * 60 + 30;
+
+    // If exceeded, cap it
+    if (totalMinutes > officeOutMinutes) {
+      return "05:30 PM";
+    }
+
+    // Otherwise format normally
+    return formatToAmPm(time);
   }
 }

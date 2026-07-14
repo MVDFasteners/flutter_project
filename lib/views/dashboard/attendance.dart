@@ -412,7 +412,7 @@ class _AttendanceState extends State<Attendance>
     required String workHours,
   }) {
     return MyContainer(
-      height: 150,
+      height: 170,
       paddingAll: 24,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,6 +452,7 @@ class _AttendanceState extends State<Attendance>
                 color: contentTheme.success.withAlpha(36),
                 child: MyText.bodySmall(
                   workHours,
+                  fontSize: 5,
                   fontWeight: 700,
                   color: contentTheme.success,
                 ),

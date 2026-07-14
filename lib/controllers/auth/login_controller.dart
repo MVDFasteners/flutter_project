@@ -126,6 +126,7 @@ class LoginController extends MyController {
 
         print("✅ Session stored: $session");
         await fetchUserByValue(email);
+        await fetchAppScreenPermissions(email);
         loading = false;
         update();
         goToDashboard();
@@ -223,6 +224,49 @@ class LoginController extends MyController {
         userModel = UserModel.fromJson(message);
         update();
         return userModel;
+      } else {
+        print("❌ HTTP Error ${response.statusCode}: ${response.body}");
+      }
+    } on SocketException {
+      print("⚠️ Connection Error: Cannot reach backend ($baseUrl)");
+    } catch (e) {
+      print("⚠️ Unexpected Error: ${e.toString()}");
+    }
+  }
+
+  Future<UserModel?> fetchAppScreenPermissions(String value) async {
+    if (AuthService.sessionId == null) {
+      print("❌ No session found. Please login first.");
+      return null;
+    }
+
+    final url = Uri.parse(
+      "$baseUrl/api/method/my_api_app.api_methods.hr_modules_api.get_screen_permissions?value=$value",
+    );
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Cookie': AuthService.sessionId!,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // Frappe APIs wrap return values inside 'message' by default
+        final message = data['message'] ?? data;
+
+        if (message is Map && message.containsKey('error')) {
+          print("❌ Error: ${message['error']}");
+          return null;
+        }
+
+        // userModel = UserModel.fromJson(message);
+        // update();
+        // return userModel;
       } else {
         print("❌ HTTP Error ${response.statusCode}: ${response.body}");
       }

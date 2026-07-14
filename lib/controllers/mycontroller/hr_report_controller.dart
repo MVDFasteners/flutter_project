@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:flatten/app_constant.dart';
 import 'package:flatten/controllers/my_controller.dart';
+import 'package:flatten/controllers/mycontroller/attendance_controller.dart';
 import 'package:flatten/helpers/services/auth_service.dart';
 import 'package:flatten/models/attendance.dart';
 import 'package:flatten/models/monthly%20attendance%20model.dart';
 import 'package:flatten/models/project_summary_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ class HRReportController extends MyController {
   List<ReportEmployeesLoginList> selectedEmployees = [];
 
   bool isSelectMode = false;
+  bool makeLock = false;
 
   DateTime dateTime = DateTime.now();
   String currentCompany = "MVD FASTENERS PRIVATE LIMITED";
@@ -60,6 +63,17 @@ class HRReportController extends MyController {
         toDate: dateFilter['toDate'],
       );
       // await onSelectStatus();
+    }
+    update();
+  }
+
+  void onSelectAll() {
+    for (ReportEmployeesLoginList data in reportEmployeesLoginList) {
+      if (selectedEmployees.contains(data)) {
+        // selectedEmployees.remove(data);
+      } else {
+        selectedEmployees.add(data);
+      }
     }
     update();
   }
@@ -359,20 +373,15 @@ class HRReportController extends MyController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        // ✅ updated keys to match backend response
         final List<dynamic> attendanceList =
             data['message']?['attendanceList'] ?? [];
         final List<dynamic> eventList = data['message']?['eventList'] ?? [];
-
         reportEmployeesLoginList = attendanceList
             .map((e) => ReportEmployeesLoginList.fromJson(e))
             .toList();
-
         allEmployeeLoginList = attendanceList
             .map((e) => ReportEmployeesLoginList.fromJson(e))
             .toList();
-
         update();
         // print("✅ Attendance list fetched successfully (${employeeLoginList.length} records)");
       } else {
@@ -527,240 +536,270 @@ class HRReportController extends MyController {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: const Text("Edit Attendance"),
-          content: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Column(
+        return GetBuilder(
+          init: this,
+          builder: (controller) {
+            // controller.makeLock = false;
+            // controller.update();
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              title: const Text("Edit Attendance"),
+              content: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: selectedEmployeesWidget(),
-                  ),
-                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: selectedEmployeesWidget(),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            log.employee ?? "---",
+                            style: TextStyle(fontSize: 16, color: primaryColor),
+                          ),
+                          const Spacer(),
+                          Text(
+                            log.inDate ?? filteredDate,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                       Text(
-                        log.employee ?? "---",
+                        log.employeeName ?? "---",
                         style: TextStyle(fontSize: 16, color: primaryColor),
                       ),
-                      const Spacer(),
+                      const SizedBox(height: 8),
                       Text(
-                        log.inDate ?? filteredDate,
-                        style: const TextStyle(fontSize: 12, color: Colors.red),
+                        log.company ?? "---",
+                        style: TextStyle(fontSize: 16, color: primaryColor),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    log.employeeName ?? "---",
-                    style: TextStyle(fontSize: 16, color: primaryColor),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    log.company ?? "---",
-                    style: TextStyle(fontSize: 16, color: primaryColor),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    log.inLocation ?? "HR Edits",
-                    style: TextStyle(fontSize: 12, color: primaryColor),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    log.outLocation ?? "HR Edits",
-                    style: TextStyle(fontSize: 12, color: primaryColor),
-                  ),
-                  const SizedBox(height: 12),
+                      const SizedBox(height: 8),
+                      Text(
+                        log.inLocation ?? "HR Edits",
+                        style: TextStyle(fontSize: 12, color: primaryColor),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        log.outLocation ?? "HR Edits",
+                        style: TextStyle(fontSize: 12, color: primaryColor),
+                      ),
+                      const SizedBox(height: 12),
 
-                  // 🕒 Time Pickers Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          readOnly: true,
-                          controller: inTimeCtrl,
-                          decoration: const InputDecoration(
-                            labelText: "In Time",
-                            prefixIcon: Icon(Icons.access_time),
-                            border: OutlineInputBorder(),
-                          ),
-                          onTap: () async {
-                            final TimeOfDay? pickedTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                              builder: (context, child) {
-                                return MediaQuery(
-                                  data: MediaQuery.of(context).copyWith(
-                                    alwaysUse24HourFormat: false,
-                                  ), // ✅ Force 12-hour format
-                                  child: child!,
-                                );
+                      // 🕒 Time Pickers Row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              readOnly: true,
+                              controller: inTimeCtrl,
+                              decoration: const InputDecoration(
+                                labelText: "In Time",
+                                prefixIcon: Icon(Icons.access_time),
+                                border: OutlineInputBorder(),
+                              ),
+                              onTap: () async {
+                                final TimeOfDay? pickedTime =
+                                    await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                      builder: (context, child) {
+                                        return MediaQuery(
+                                          data: MediaQuery.of(context).copyWith(
+                                            alwaysUse24HourFormat: false,
+                                          ), // ✅ Force 12-hour format
+                                          child: child!,
+                                        );
+                                      },
+                                    );
+                                if (pickedTime != null) {
+                                  String time = pickedTime.format(context);
+                                  inTimeCtrl.text = "$time:00";
+                                }
                               },
-                            );
-                            if (pickedTime != null) {
-                              String time = pickedTime.format(context);
-                              inTimeCtrl.text = "$time:00";
-                            }
-                          },
-                        ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: TextFormField(
+                              readOnly: true,
+                              controller: outTimeCtrl,
+                              decoration: const InputDecoration(
+                                labelText: "Out Time",
+                                prefixIcon: Icon(Icons.access_time_filled),
+                                border: OutlineInputBorder(),
+                              ),
+                              onTap: () async {
+                                final TimeOfDay? pickedTime =
+                                    await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                      builder: (context, child) {
+                                        return MediaQuery(
+                                          data: MediaQuery.of(context).copyWith(
+                                            alwaysUse24HourFormat: false,
+                                          ),
+                                          child: child!,
+                                        );
+                                      },
+                                    );
+                                if (pickedTime != null) {
+                                  String time = pickedTime.format(context);
+                                  outTimeCtrl.text = "$time:00";
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: TextFormField(
-                          readOnly: true,
-                          controller: outTimeCtrl,
-                          decoration: const InputDecoration(
-                            labelText: "Out Time",
-                            prefixIcon: Icon(Icons.access_time_filled),
-                            border: OutlineInputBorder(),
+                      Text("Locked = ${log.makeLock}"),
+                      Row(
+                        children: [
+                          Text("Make Lock :"),
+                          Checkbox(
+                            value: controller.makeLock,
+                            onChanged: (value) {
+                              print(value);
+                              controller.makeLock = value!;
+                              controller.update();
+                            },
                           ),
-                          onTap: () async {
-                            final TimeOfDay? pickedTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                              builder: (context, child) {
-                                return MediaQuery(
-                                  data: MediaQuery.of(
-                                    context,
-                                  ).copyWith(alwaysUse24HourFormat: false),
-                                  child: child!,
-                                );
-                              },
-                            );
-                            if (pickedTime != null) {
-                              String time = pickedTime.format(context);
-                              outTimeCtrl.text = "$time:00";
-                            }
-                          },
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: remarks,
+                        decoration: const InputDecoration(
+                          labelText: "Remarks",
+                          prefixIcon: Icon(Icons.note_alt),
+                          border: OutlineInputBorder(),
                         ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 200,
+                              color: Colors.red.withOpacity(0.2),
+                              alignment: Alignment.center,
+                              child: inImage != null
+                                  ? Image.memory(
+                                      base64Decode(inImage!.split(',')[1]),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: Colors.grey[200],
+                                      child: Icon(Icons.person, size: 50),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              height: 200,
+                              color: Colors.blue.withOpacity(0.2),
+                              alignment: Alignment.center,
+                              child: outImage != null
+                                  ? Image.memory(
+                                      base64Decode(outImage!.split(',')[1]),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: Colors.grey[200],
+                                      child: Icon(Icons.person, size: 50),
+                                    ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: remarks,
-                    decoration: const InputDecoration(
-                      labelText: "Remarks",
-                      prefixIcon: Icon(Icons.note_alt),
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 200,
-                          color: Colors.red.withOpacity(0.2),
-                          alignment: Alignment.center,
-                          child: inImage != null
-                              ? Image.memory(
-                                  base64Decode(inImage!.split(',')[1]),
-                                  fit: BoxFit.cover,
-                                )
-                              : Container(
-                                  color: Colors.grey[200],
-                                  child: Icon(Icons.person, size: 50),
-                                ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Container(
-                          height: 200,
-                          color: Colors.blue.withOpacity(0.2),
-                          alignment: Alignment.center,
-                          child: outImage != null
-                              ? Image.memory(
-                                  base64Decode(outImage!.split(',')[1]),
-                                  fit: BoxFit.cover,
-                                )
-                              : Container(
-                                  color: Colors.grey[200],
-                                  child: Icon(Icons.person, size: 50),
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
 
-            ElevatedButton.icon(
-              onPressed: () async {
-                print("In Time: ${inTimeCtrl.text}");
-                print("Out Time: ${outTimeCtrl.text}");
-                print("Remarks: ${remarks.text}");
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    print("In Time: ${inTimeCtrl.text}");
+                    print("Out Time: ${outTimeCtrl.text}");
+                    print("Remarks: ${remarks.text}");
 
-                log.inTime = inTimeCtrl.text;
-                log.outTime = outTimeCtrl.text;
-                log.remarks = remarks.text;
-                log.inDate = log.inDate ?? dateController.value.text;
-                log.outDate = log.outTime == null
-                    ? null
-                    : log.outDate ?? dateController.value.text;
-                log.inLocation = log.inLocation ?? "HR Edits";
-                log.outLocation = log.outLocation ?? "HR Edits";
+                    log.inTime = inTimeCtrl.text;
+                    log.outTime = outTimeCtrl.text;
+                    log.remarks = remarks.text;
+                    log.inDate = log.inDate ?? dateController.value.text;
+                    log.outDate = log.outTime == null
+                        ? null
+                        : log.outDate ?? dateController.value.text;
+                    log.inLocation = log.inLocation ?? "HR Edits";
+                    log.outLocation = log.outLocation ?? "HR Edits";
+                    log.makeLock = controller.makeLock ? 1 : 0;
 
-                bool? value = await saveLoginEntryDirect(log: log);
-                if (value ?? false) {
-                  toastMessage(message: "Update Success");
-                  if (value ?? false) {
-                    if (isFromMonth) {
-                      Map<String, String> dateFilter = {};
-                      if (selectedYear != null && selectedMonth != null) {
-                        dateFilter = getMonthDateRange(
-                          int.parse(selectedYear!),
-                          selectedMonth!,
-                        );
-                        print("From: ${dateFilter['fromDate']}");
-                        print("To: ${dateFilter['toDate']}");
+                    bool? value = await saveLoginEntryDirect(log: log);
+                    if (value ?? false) {
+                      toastMessage(message: "Update Success");
+                      if (value ?? false) {
+                        if (isFromMonth) {
+                          Map<String, String> dateFilter = {};
+                          if (selectedYear != null && selectedMonth != null) {
+                            dateFilter = getMonthDateRange(
+                              int.parse(selectedYear!),
+                              selectedMonth!,
+                            );
+                            print("From: ${dateFilter['fromDate']}");
+                            print("To: ${dateFilter['toDate']}");
+                          }
+
+                          await fetchLoginListMonthly(
+                            company: currentCompany,
+                            employeeName: employeeNameMonthCtrl.text,
+
+                            fromDate: dateFilter['fromDate'],
+                            toDate: dateFilter['toDate'],
+                          );
+                        } else {
+                          await fetchLoginListOneDay(
+                            fromDate: dateController.value.text,
+                            toDate: dateController.value.text,
+                            company: currentCompany,
+                            employeeName: employeeNameCtrl.value.text,
+                          );
+                          await onSelectStatus();
+                        }
                       }
-
-                      await fetchLoginListMonthly(
-                        company: currentCompany,
-                        employeeName: employeeNameMonthCtrl.text,
-
-                        fromDate: dateFilter['fromDate'],
-                        toDate: dateFilter['toDate'],
-                      );
-                    } else {
-                      await fetchLoginListOneDay(
-                        fromDate: dateController.value.text,
-                        toDate: dateController.value.text,
-                        company: currentCompany,
-                        employeeName: employeeNameCtrl.value.text,
-                      );
-                      await onSelectStatus();
                     }
-                  }
-                }
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.save),
-              label: const Text("Save"),
-            ),
-          ],
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.save),
+                  label: const Text("Save"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Future<void> showEditMultipleLoginDialog(BuildContext context) async {
+  Future<void> showEditMultipleLoginDialog(
+    BuildContext context,
+    List<ReportEmployeesLoginList> logs,
+  ) async {
     final TextEditingController inTimeCtrl = TextEditingController();
     final TextEditingController outTimeCtrl = TextEditingController();
     final TextEditingController remarks = TextEditingController();
@@ -921,8 +960,8 @@ class HRReportController extends MyController {
     int successCount = 0;
     if (selectedEmployees.isNotEmpty) {
       for (ReportEmployeesLoginList log in selectedEmployees) {
-        log.inTime = inTime;
-        log.outTime = outTime;
+        log.inTime = log.inTime ?? inTime;
+        log.outTime = log.outTime ?? outTime;
         log.remarks = remarks;
         log.inDate = inDate;
         log.outDate = inDate;
